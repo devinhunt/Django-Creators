@@ -10,3 +10,4 @@ parts
 src/*.egg-info
 .DS_Store
 creators.db
+media/image/upload*
