@@ -19,11 +19,19 @@ class Creator(models.Model):
     def __unicode__(self):
         return self.name + " (" + self.kind + ")";
     
-class Place(models.Model):
+class Floor(models.Model):
+    order = models.IntegerField(default = 0)
     name = models.CharField(max_length = 140)
     
     def __unicode__(self):
         return self.name
+
+class Room(models.Model):
+    name = models.CharField(max_length = 140)
+    floor = models.ForeignKey(Floor)
+    
+    def __unicode__(self):
+        return self.name + " on the " + self.floor.name
     
 class Video(models.Model):
     creator = models.ForeignKey(Creator)
@@ -35,11 +43,11 @@ class Video(models.Model):
     
 class EventChip(models.Model):
     creator = models.ForeignKey(Creator)
+    room = models.ForeignKey(Room)
     name = models.CharField(max_length = 140)
     description = models.TextField()
-    place = models.ForeignKey(Place)
-    start = models.DateTimeField(auto_now_add = True)
-    end = models.DateTimeField(auto_now_add = True)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
     
     def __unicode__(self):
         return self.name + " with " + self.creator.name

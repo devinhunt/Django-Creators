@@ -3,7 +3,8 @@ from creators.models import *
 
 admin.site.register(Alert);
 admin.site.register(Creator);
-admin.site.register(Place);
+admin.site.register(Floor);
+admin.site.register(Room);
 admin.site.register(Video);
 admin.site.register(EventChip);
 admin.site.register(CreatorChip);
