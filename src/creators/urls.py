@@ -5,8 +5,10 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     (r'^$', 'index'),
-    url(r'^dashboard/$', 'dashboard', name = "dashboard"),
-    url(r'^dashboard/alert/add$', 'alert_add', name = "alert_add"),
-    url(r'^dashboard/node/upload$', 'node_upload', name = "node_upload"),
+    
+    # services
+    (r'^api/', include('creators.views.api')),
+    
+    # administration 
     (r'^admin/', include(admin.site.urls))
 )

@@ -23,6 +23,9 @@ class Floor(models.Model):
     order = models.IntegerField(default = 0)
     name = models.CharField(max_length = 140)
     
+    class Meta:
+        ordering = ['order']
+    
     def __unicode__(self):
         return self.name
 
