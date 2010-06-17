@@ -8,9 +8,18 @@ class FloorAdmin(admin.ModelAdmin):
     inlines = [
         RoomInline,
     ]
+    
+class CreatorThemeInline(admin.TabularInline):
+    model = CreatorTheme
+    
+class CreatorAdmin(admin.ModelAdmin):
+    inlines = [
+        #CreatorThemeInline,
+    ]
 
 admin.site.register(Alert);
-admin.site.register(Creator);
+admin.site.register(Creator, CreatorAdmin);
+admin.site.register(CreatorTheme);
 admin.site.register(Floor, FloorAdmin);
 admin.site.register(Room);
 admin.site.register(Video);

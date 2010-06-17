@@ -5,19 +5,26 @@ class Alert(models.Model):
     title = models.CharField(max_length = 140)
     message = models.TextField()
     
+class CreatorTheme(models.Model):
+    type = models.CharField(max_length = 140)
+
+    def __unicode__(self):
+        return self.type + " theme"
+
 class Creator(models.Model):
-    CREATOR_TYPES = (
-        ("musician", "Musician"),
-        ("artist", "Artist"),
-        ("fashion", "Fashion"),
-    )
-    
     name = models.CharField(max_length = 140)
-    kind = models.CharField(max_length = 140, choices = CREATOR_TYPES)
-    thumbnail = models.ImageField(upload_to = "image/upload/%Y/%m/%d")
+    location = models.CharField(max_length = 140)
+    remote_thumb = models.URLField(blank = True)
+    local_thumb = models.ImageField(upload_to = "image/upload/%Y/%m/%d", blank = True)
+    themes = models.ManyToManyField(CreatorTheme)
+    
+    def tumbnail():
+        if local_thumb:
+            return local_thumb
+        return remote_thumb
     
     def __unicode__(self):
-        return self.name + " (" + self.kind + ")";
+        return self.name
     
 class Floor(models.Model):
     order = models.IntegerField(default = 0)
