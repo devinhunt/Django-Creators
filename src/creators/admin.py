@@ -23,5 +23,5 @@ admin.site.register(CreatorTheme);
 admin.site.register(Floor, FloorAdmin);
 admin.site.register(Room);
 admin.site.register(Video);
-admin.site.register(EventChip);
+admin.site.register(Event);
 admin.site.register(CreatorChip);

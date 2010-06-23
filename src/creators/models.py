@@ -17,6 +17,7 @@ class Creator(models.Model):
     remote_thumb = models.URLField(blank = True)
     local_thumb = models.ImageField(upload_to = "image/upload/%Y/%m/%d", blank = True)
     themes = models.ManyToManyField(CreatorTheme)
+    synopsis = models.TextField();
     
     def tumbnail():
         if local_thumb:
@@ -28,7 +29,7 @@ class Creator(models.Model):
     
 class Floor(models.Model):
     order = models.IntegerField(default = 0)
-    name = models.CharField(max_length = 140)
+    name = models.CharField(max_length = 140, blank = True)
     
     class Meta:
         ordering = ['order']
@@ -47,15 +48,16 @@ class Video(models.Model):
     creator = models.ForeignKey(Creator)
     video = models.FileField(upload_to = "video/%Y/%m/%d")
     title = models.CharField(max_length = 140)
+    hash = models.CharField(max_length = 400)
     
     def __unicode__(self):
         return self.title + " for " + self.creator.name
     
-class EventChip(models.Model):
-    creator = models.ForeignKey(Creator)
+class Event(models.Model):
+    creator = models.ForeignKey(Creator, blank = True)
     room = models.ForeignKey(Room)
     name = models.CharField(max_length = 140)
-    description = models.TextField()
+    description = models.TextField(blank = True)
     start = models.DateTimeField()
     end = models.DateTimeField()
     
@@ -68,4 +70,4 @@ class CreatorChip(models.Model):
     realtedChips = models.ForeignKey('self', blank = True)
     
     def __unicode__(self):
-        return self.creator.name + "chip"
+        return self.creator.name + " chip"
