@@ -41,7 +41,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/www/Django-Creators/media'
+MEDIA_ROOT = '/www/Django-Creators/media/'
 
 FILE_UPLOAD_TEMP_DIR = '/www/Django-Creators/tmp'
 
