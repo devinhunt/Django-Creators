@@ -45,13 +45,12 @@ class Room(models.Model):
         return self.name + " on the " + self.floor.name
     
 class Video(models.Model):
-    creator = models.ForeignKey(Creator)
-    video = models.FileField(upload_to = "video/%Y/%m/%d")
+    video = models.FileField(upload_to = "video/%Y/%m/%d", blank = True)
     title = models.CharField(max_length = 140)
-    hash = models.CharField(max_length = 400)
+    file_name = models.CharField(max_length = 400)
     
     def __unicode__(self):
-        return self.title + " for " + self.creator.name
+        return self.title + " video"
     
 class Event(models.Model):
     creator = models.ForeignKey(Creator)
@@ -70,11 +69,11 @@ class Event(models.Model):
 
 class CreatorChip(models.Model):
     creator = models.ForeignKey(Creator)
-    video = models.ForeignKey(Video, blank = True)
-    realtedChips = models.ForeignKey('self', blank = True)
+    video = models.ForeignKey(Video)
+    realtedChips = models.ManyToManyField('self', null = True, blank = True, symmetrical = False)
     
     def __unicode__(self):
-        return self.creator.name + " chip"
+        return self.creator.name + " / " + self.video.title + " chip "
         
 class Status(models.Model):
     MOD_STATES = (   ("dead", "Not Used"),
@@ -82,7 +81,7 @@ class Status(models.Model):
                             ("minor", "Minor Status"),
                         )
 
-    state = models.CharField(max_length = 5, choices = MOD_STATES)
+    state = models.CharField(max_length = 5, choices = MOD_STATES, default = "dead")
     created = models.DateTimeField()
     status = models.CharField(max_length = 140)
     user = models.CharField(max_length = 140)

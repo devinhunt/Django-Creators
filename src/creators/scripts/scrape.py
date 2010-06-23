@@ -3,13 +3,12 @@ from creators.models import *
 from datetime import datetime, timedelta
 
 creators_url = "http://www.thecreatorsproject.com/api/creators.json"
-events_url = "http://ec2-204-236-200-105.compute-1.amazonaws.com/party/interface.php?type=list_raw_events"
 interface_api = "http://at.thecreatorsproject.com/party/interface.php"
 valid_event_types = ["music", "art", "film", "panel"]
 
 def scrape():
-    scrapeCreators()
-    scrapeEvents()
+    scrapeRooms();
+    scrapeEvents();
 
 def scrapeCreators():
     print "INFO :: Starting a scrape of creators."
@@ -35,10 +34,41 @@ def scrapeCreators():
             print "Added %s" % creator.__unicode__();
             
 def scrapeRooms():
-    print "INFO :: Starting a scrape of rooms."
+    print 'INFO :: Starting a scrape of rooms.'
     
+    room_objs = json.load(urllib.urlopen(interface_api + '?type=list_all_rooms'))
     
+    for room_obj in room_objs:
+        floor, created = Floor.objects.get_or_create(order = room_obj['floor'])
+        room, created = Room.objects.get_or_create( pk = room_obj['id'],
+                                                    name = room_obj['name'], 
+                                                    floor = floor,
+                                                    x = room_obj['x'],
+                                                    y = room_obj['y'],
+                                                    width = room_obj['width'],
+                                                    height = room_obj['height'])
+
+def scrapeEvents():
+    print 'INFO :: Starting a scrape of events.'
+    event_objs = json.load(urllib.urlopen(interface_api + '?type=list_events'))
+    default_creator, created = Creator.objects.get_or_create(name = "Default Creator", location = "Your Attic", synopsis = "He doesn't really exist.")
     
+    for event_obj in event_objs:
+        start_time = datetime.now()
+        end_time = datetime.now()
+        description = event_obj['description']
+        if description == None:
+            description = ""
+        
+        floor, created = Floor.objects.get_or_create(order = event_obj['floor'])
+        room, created = Room.objects.get_or_create(name = event_obj['room_name'], floor = floor)
+        event, created = Event.objects.get_or_create( name = event_obj['name'],
+                                                      creator = default_creator,
+                                                      room = room,
+                                                      description = description,
+                                                      start = start_time,
+                                                      end = end_time)
+
 def main(*args):
     try:
         scrape()

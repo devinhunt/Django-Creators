@@ -9,6 +9,14 @@ class FloorAdmin(admin.ModelAdmin):
         RoomInline,
     ]
     
+class VideoInline(admin.TabularInline):
+    model = Video
+
+class CreatorChipAdmin(admin.ModelAdmin):
+    inlines = [
+        
+    ]
+
 class CreatorThemeInline(admin.TabularInline):
     model = CreatorTheme
     
@@ -17,11 +25,11 @@ class CreatorAdmin(admin.ModelAdmin):
         #CreatorThemeInline,
     ]
 
-admin.site.register(Alert);
+admin.site.register(Status);
 admin.site.register(Creator, CreatorAdmin);
 admin.site.register(CreatorTheme);
 admin.site.register(Floor, FloorAdmin);
 admin.site.register(Room);
 admin.site.register(Video);
 admin.site.register(Event);
-admin.site.register(CreatorChip);
+admin.site.register(CreatorChip, CreatorChipAdmin);
