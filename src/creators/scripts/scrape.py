@@ -60,7 +60,11 @@ def scrapeEvents():
         if description == None:
             description = ""
         
-        floor, created = Floor.objects.get_or_create(order = event_obj['floor'])
+        event_floor = event_obj['floor']
+        if(event_floor == '8'):
+            event_floor = '3';
+        
+        floor, created = Floor.objects.get_or_create(order = event_floor)
         room, created = Room.objects.get_or_create(name = event_obj['room_name'], floor = floor)
         event, created = Event.objects.get_or_create( name = event_obj['name'],
                                                       creator = default_creator,
