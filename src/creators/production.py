@@ -6,7 +6,7 @@ except:
     pass
 import logging
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -18,7 +18,7 @@ MANAGERS = ADMINS
 DATABASE_ENGINE = 'mysql'
 DATABASE_NAME = 'www_django'
 DATABASE_USER = 'www_django'
-DATABASE_PASSWORD = 'wWwDjango'
+DATABASE_PASSWORD = 'wWw_django'
 DATABASE_HOST = ''
 DATABASE_PORT = ''
 
