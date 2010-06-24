@@ -29,7 +29,7 @@ def json_livephoto(request, pk = None):
     return HttpResponse(serializers.serialize("json", LivePhoto.objects.all(), ensure_ascii = True))
     
 def json_livephoto_latest(request, pk = None):
-    return HttpResponse(serializers.serialize("json", LivePhoto.objects.all()[:1], ensure_ascii = True))
+    return HttpResponse(serializers.serialize("json", LivePhoto.objects.reverse()[:1], ensure_ascii = True))
 
 from django.conf.urls.defaults import *
 
