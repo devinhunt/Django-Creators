@@ -50,28 +50,31 @@ def scrapeRooms():
 
 def scrapeEvents():
     print 'INFO :: Starting a scrape of events.'
-    event_objs = json.load(urllib.urlopen(interface_api + '?type=list_events'))
+    event_objs = json.load(urllib.urlopen(interface_api + '?type=list_raw_events'))
     default_creator, created = Creator.objects.get_or_create(name = "Default Creator", location = "Your Attic", synopsis = "He doesn't really exist.")
     
     for event_obj in event_objs:
-        start_time = datetime.now()
-        end_time = datetime.now()
-        description = event_obj['description']
-        if description == None:
-            description = ""
+        if(event_obj['type'] in valid_event_types):
+            if event_obj['time_end'] == '0000-00-00 00:00:00' or event_obj['time_start'] == '0000-00-00 00:00:00':
+                print "%s has bad date %s" % (event_obj['name'], event_obj['time_end'])
+            start_time = datetime.now()
+            end_time = datetime.now()
+            description = event_obj['description']
+            if description == None:
+                description = ""
         
-        event_floor = event_obj['floor']
-        if(event_floor == '8'):
-            event_floor = '3';
+            event_floor = event_obj['floor']
+            if(event_floor == '8'):
+                event_floor = '3';
         
-        floor, created = Floor.objects.get_or_create(order = event_floor)
-        room, created = Room.objects.get_or_create(name = event_obj['room_name'], floor = floor)
-        event, created = Event.objects.get_or_create( name = event_obj['name'],
-                                                      creator = default_creator,
-                                                      room = room,
-                                                      description = description,
-                                                      start = start_time,
-                                                      end = end_time)
+            floor, created = Floor.objects.get_or_create(order = event_floor)
+            room, created = Room.objects.get_or_create(name = event_obj['room_name'], floor = floor)
+            event, created = Event.objects.get_or_create( name = event_obj['name'],
+                                                          creator = default_creator,
+                                                          room = room,
+                                                          description = description,
+                                                          start = start_time,
+                                                          end = end_time)
 
 def main(*args):
     try:

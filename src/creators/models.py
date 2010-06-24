@@ -70,7 +70,7 @@ class Event(models.Model):
 class CreatorChip(models.Model):
     creator = models.ForeignKey(Creator)
     video = models.ForeignKey(Video)
-    realtedChips = models.ManyToManyField('self', null = True, blank = True, symmetrical = False)
+    relatedChips = models.ManyToManyField('self', null = True, blank = True, symmetrical = False)
     
     def __unicode__(self):
         return self.creator.name + " / " + self.video.title + " chip "
