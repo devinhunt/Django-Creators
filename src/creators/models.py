@@ -86,3 +86,10 @@ class Status(models.Model):
     status = models.CharField(max_length = 140)
     user = models.CharField(max_length = 140)
     room = models.ForeignKey(Room)
+    
+    def __unicode__(self):
+        return self.status
+
+class LivePhoto(models.Model):
+    image = models.ImageField(upload_to = "image/photos/%H/%m")
+    created = models.DateTimeField(auto_now_add = True)

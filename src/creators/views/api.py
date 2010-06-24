@@ -22,8 +22,14 @@ def json_room(request, id = None):
 def json_floor(request, id = None):
     return HttpResponse(serializers.serialize("json", Floor.objects.all(), ensure_ascii = True))
     
-def json_status(request, id = None):
+def json_status(request, pk = None):
     return HttpResponse(serializers.serialize("json", Status.objects.all(), ensure_ascii = True))
+    
+def json_livephoto(request, pk = None):
+    return HttpResponse(serializers.serialize("json", LivePhoto.objects.all(), ensure_ascii = True))
+    
+def json_livephoto_latest(request, pk = None):
+    return HttpResponse(serializers.serialize("json", LivePhoto.objects.reverse()[:1], ensure_ascii = True))
 
 from django.conf.urls.defaults import *
 
@@ -35,4 +41,7 @@ urlpatterns = patterns('',
     url(r'^floor/$', json_floor, name = "json_floor"),
     url(r'^videos/$', json_videos, name = "json_videos"),
     url(r'^status/$', json_status, name = "json_status"),
+    url(r'^status/since/(?P<pk>\d+)$', json_status, name = "json_status_since"),
+    url(r'^livephoto/$', json_livephoto, name = "json_livephoto"),
+    url(r'^livephoto/latest/', json_livephoto_latest, name = "json_livephoto_latest"),
 )

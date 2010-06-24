@@ -33,3 +33,4 @@ admin.site.register(Room);
 admin.site.register(Video);
 admin.site.register(Event);
 admin.site.register(CreatorChip, CreatorChipAdmin);
+admin.site.register(LivePhoto);
