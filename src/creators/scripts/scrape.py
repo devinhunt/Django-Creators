@@ -55,10 +55,16 @@ def scrapeEvents():
     
     for event_obj in event_objs:
         if(event_obj['type'] in valid_event_types):
+
             if event_obj['time_end'] == '0000-00-00 00:00:00' or event_obj['time_start'] == '0000-00-00 00:00:00':
-                print "%s has bad date %s" % (event_obj['name'], event_obj['time_end'])
-            start_time = datetime.now()
-            end_time = datetime.now()
+                print "%s has bad date data " % (event_obj['name'])
+                
+            start_time = datetime.strptime(event_obj['time_start'], '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(event_obj['time_end'], '%Y-%m-%d %H:%M:%S')
+            
+            if(start_time > end_time):
+                print "%s ends before it starts " % (event_obj['name'])
+            
             description = event_obj['description']
             if description == None:
                 description = ""
