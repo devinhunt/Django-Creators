@@ -76,10 +76,10 @@ class CreatorChip(models.Model):
         return self.creator.name + " / " + self.video.title + " chip "
         
 class Status(models.Model):
-    MOD_STATES = (   ("dead", "Not Used"),
-                            ("major", "Major Status"),
-                            ("minor", "Minor Status"),
-                        )
+    MOD_STATES = (  ("dead", "Not Used"),
+                    ("major", "Major Status"),
+                    ("minor", "Minor Status"),
+                 )
 
     state = models.CharField(max_length = 5, choices = MOD_STATES, default = "dead")
     created = models.DateTimeField()

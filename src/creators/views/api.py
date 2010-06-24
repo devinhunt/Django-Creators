@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 def json_schedule(request):
     return HttpResponse(serializers.serialize("json", Event.objects.all(), ensure_ascii = True))
     
-def json_creator(request, id = None):
+def json_creator(request):
     return HttpResponse(serializers.serialize("json", Creator.objects.all(), ensure_ascii = True))
     
 def json_creator_chips(request):
@@ -16,14 +16,17 @@ def json_creator_chips(request):
 def json_videos(request):
     return HttpResponse(serializers.serialize("json", Video.objects.all(), ensure_ascii = True))
 
-def json_room(request, id = None):
+def json_room(request):
     return HttpResponse(serializers.serialize("json", Room.objects.all(), ensure_ascii = True))
 
-def json_floor(request, id = None):
+def json_floor(request):
     return HttpResponse(serializers.serialize("json", Floor.objects.all(), ensure_ascii = True))
     
 def json_status(request, pk = None):
-    return HttpResponse(serializers.serialize("json", Status.objects.all(), ensure_ascii = True))
+    if pk:
+        return HttpResponse(serializers.serialize("json", Status.objects.filter(pk__gt = pk), ensure_ascii = True))
+    else:
+        return HttpResponse(serializers.serialize("json", Status.objects.all(), ensure_ascii = True))
     
 def json_livephoto(request, pk = None):
     return HttpResponse(serializers.serialize("json", LivePhoto.objects.all(), ensure_ascii = True))
