@@ -32,5 +32,6 @@ admin.site.register(Floor, FloorAdmin);
 admin.site.register(Room);
 admin.site.register(Video);
 admin.site.register(Event);
+admin.site.register(EventChip);
 admin.site.register(CreatorChip, CreatorChipAdmin);
 admin.site.register(LivePhoto);

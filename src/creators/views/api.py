@@ -5,7 +5,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 # Direct Model Access
 
 def json_schedule(request):
-    return HttpResponse(serializers.serialize("json", Event.objects.all(), ensure_ascii = True))
+    return HttpResponse('{ "events" : ' + serializers.serialize("json", Event.objects.all(), ensure_ascii = True) + ', ' +
+                           '"chips" : ' + serializers.serialize("json", EventChip.objects.all(), ensure_ascii = True) + '}')
     
 def json_creator(request):
     return HttpResponse(serializers.serialize("json", Creator.objects.all(), ensure_ascii = True))

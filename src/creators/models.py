@@ -66,6 +66,10 @@ class Event(models.Model):
     
     def __unicode__(self):
         return self.name + " with " + self.creator.name
+        
+class EventChip(models.Model):
+    image = models.ImageField(upload_to = "image/upload/chip/%Y/%m/%d", blank = True);
+    event = models.ForeignKey(Event)
 
 class CreatorChip(models.Model):
     creator = models.ForeignKey(Creator)
