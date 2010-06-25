@@ -6,7 +6,7 @@ except:
     pass
 import logging
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
