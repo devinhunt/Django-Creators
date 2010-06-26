@@ -92,7 +92,7 @@ class Status(models.Model):
     room = models.ForeignKey(Room)
     
     def __unicode__(self):
-        return self.status
+        return '[' + self.state + '] ' + self.status
 
 class LivePhoto(models.Model):
     image = models.ImageField(upload_to = "image/photos/%H/%m")
