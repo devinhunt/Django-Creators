@@ -32,8 +32,9 @@ def json_status(request, pk = None):
 def json_livephoto(request, pk = None):
     return HttpResponse(serializers.serialize("json", LivePhoto.objects.all(), ensure_ascii = True))
     
-def json_livephoto_latest(request, pk = None):
-    return HttpResponse(serializers.serialize("json", LivePhoto.objects.all()[1:], ensure_ascii = True))
+def json_livephoto_latest(request):
+    photo = LivePhoto.objects.all().order_by('-pk')[0:1]
+    return HttpResponse(serializers.serialize("json", photo, ensure_ascii = True))
 
 from django.conf.urls.defaults import *
 
