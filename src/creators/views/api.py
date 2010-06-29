@@ -30,7 +30,7 @@ def json_status(request, pk = None):
         return HttpResponse(serializers.serialize("json", Status.objects.all(), ensure_ascii = True))
     
 def json_livephoto(request, pk = None):
-    return HttpResponse(serializers.serialize("json", LivePhoto.objects.all(), ensure_ascii = True))
+    return HttpResponse(serializers.serialize("json", LivePhoto.objects.all().order_by('-created'), ensure_ascii = True))
     
 def json_livephoto_latest(request):
     photo = LivePhoto.objects.all().order_by('-pk')[0:1]

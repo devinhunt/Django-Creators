@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         latest_status = Status.objects.all().order_by("-pk")[0]
-        print latest_status.pk
+        print latest_status
         time_string = latest_status.created.strftime('%Y-%m-%d %H:%M:%S')
         status_url = "http://at.thecreatorsproject.com/party/interface.php?type=list_all_users&by_time=" + time_string
         print status_url
