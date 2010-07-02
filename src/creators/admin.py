@@ -19,4 +19,5 @@ admin.site.register(Creator, CreatorAdmin);
 admin.site.register(Floor, FloorAdmin);
 admin.site.register(Room);
 admin.site.register(Event);
-admin.site.register(LivePhoto);
+admin.site.register(Photo);
+admin.site.register(PartyUser)

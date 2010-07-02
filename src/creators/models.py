@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import datetime, timedelta
+import hashlib
 
 class Floor(models.Model):
     order = models.IntegerField(default = 0)
@@ -71,21 +72,25 @@ class Status(models.Model):
     def __unicode__(self):
         return '[' + self.state + '] ' + self.status
         
-class PartyUser(models.Models):
+class PartyUser(models.Model):
     name = models.CharField(max_length = 100)
     created = models.DateTimeField(auto_now_add = True)
-    api_key = models.CharField(max_length = 100)
+    api_key = models.CharField(max_length = 100, blank = True)
     phone_number = models.CharField(max_length = 20, blank = True)
     
     x = models.IntegerField(default = 0)
     y = models.IntegerField(default = 0)
     
-    current_status = models.ForeignKey(Status, blank = True)
-    current_room = models.ForeignKey(Room, blank = True)
-    friends = models.ForeignKey('self')
+    current_status = models.ForeignKey(Status, blank = True, null = True)
+    current_room = models.ForeignKey(Room, blank = True, null = True)
+    friends = models.ForeignKey('self', blank = True, null = True)
     
-    def generate_api_key():
-        api_key = 'bob'
+    def save(self, *args, **kwargs):
+        self.api_key = hashlib.md5(datetime.now().isoformat() + " " + self.name).hexdigest()
+        super(PartyUser, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        return self.name + ' (created ' + self.created.isoformat() + ')'
 
 class Photo(models.Model):
     image = models.ImageField(upload_to = "image/upload/photo/%Y-%m-%d")
