@@ -2,12 +2,23 @@ from setuptools import setup, find_packages
 
 setup(
     name = "django-creators",
-    version = "1.0",
-    url = 'http://github.com/',
-    license = 'Private',
-    description = "The management and video server for the Vice Creators Project parties.",
-    author = 'Devin Hunt',
+    version = "0.2",
+    url = 'http://hailpixel.com',
     packages = find_packages('src'),
     package_dir = {'': 'src'},
-    install_requires = ['setuptools'],
+    
+    # Scripts and Dependencies
+    install_requires = ['setuptools',
+                        'zc.buildout',
+                        'zc.recipe.egg',
+                        'South',
+                        "simplejson",
+                        ],
+    
+    # Author Information
+    author = 'Devin Hunt',
+    author_email = 'devinhunt@gmail.com',
+    description = '.',
+    license = 'Private',
+    url = 'http://www.hailpixel.com',
 )
