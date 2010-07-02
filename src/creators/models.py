@@ -30,7 +30,7 @@ class Creator(models.Model):
     name = models.CharField(max_length = 200)
     theme = models.CharField(max_length = 10, choices = CREATOR_THEMES)
     local_thumbname = models.CharField(max_length = 200, blank = True)
-    thumbnail = models.ImageField(upload_to = "image/upload/%Y/%m/%d", blank = True)
+    thumbnail = models.ImageField(upload_to = "image/upload/chips/%Y-%m-%d", blank = True)
     description = models.TextField(blank = True)
     
     
@@ -70,103 +70,24 @@ class Status(models.Model):
 
     def __unicode__(self):
         return '[' + self.state + '] ' + self.status
-
-
-'''
-class CreatorTheme(models.Model):
-    type = models.CharField(max_length = 140)
-
-    def __unicode__(self):
-        return self.type + " theme"
-
-class Creator(models.Model):
-    name = models.CharField(max_length = 140)
-    location = models.CharField(max_length = 140)
-    remote_thumb = models.URLField(blank = True)
-    local_thumb = models.ImageField(upload_to = "image/upload/%Y/%m/%d", blank = True)
-    themes = models.ManyToManyField(CreatorTheme)
-    synopsis = models.TextField();
+        
+class PartyUser(models.Models):
+    name = models.CharField(max_length = 100)
+    created = models.DateTimeField(auto_now_add = True)
+    api_key = models.CharField(max_length = 100)
+    phone_number = models.CharField(max_length = 20, blank = True)
     
-    def tumbnail():
-        if local_thumb:
-            return local_thumb
-        return remote_thumb
-    
-    def __unicode__(self):
-        return self.name
-    
-class Floor(models.Model):
-    order = models.IntegerField(default = 0)
-    name = models.CharField(max_length = 140, blank = True)
-    
-    class Meta:
-        ordering = ['order']
-    
-    def __unicode__(self):
-        return self.name
-
-class Room(models.Model):
-    name = models.CharField(max_length = 140)
-    floor = models.ForeignKey(Floor)
     x = models.IntegerField(default = 0)
     y = models.IntegerField(default = 0)
-    width = models.IntegerField(default = 100)
-    height = models.IntegerField(default = 100)
     
-    def __unicode__(self):
-        return self.name + " on the " + self.floor.name
+    current_status = models.ForeignKey(Status, blank = True)
+    current_room = models.ForeignKey(Room, blank = True)
+    friends = models.ForeignKey('self')
     
-class Video(models.Model):
-    video = models.FileField(upload_to = "video/%Y/%m/%d", blank = True)
-    title = models.CharField(max_length = 140)
-    file_name = models.CharField(max_length = 400)
-    
-    def __unicode__(self):
-        return self.title + " video"
-    
-class Event(models.Model):
-    creator = models.ForeignKey(Creator)
-    room = models.ForeignKey(Room)
-    name = models.CharField(max_length = 140)
-    description = models.TextField(blank = True)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
-    
-    def validateEndDate():
-        if(end < start):
-            end = start + timedelta(minutes = 30)
-    
-    def __unicode__(self):
-        return self.name + " with " + self.creator.name
-        
-class EventChip(models.Model):
-    image = models.ImageField(upload_to = "image/upload/chip/%Y/%m/%d", blank = True);
-    event = models.ForeignKey(Event)
+    def generate_api_key():
+        api_key = 'bob'
 
-class CreatorChip(models.Model):
-    creator = models.ForeignKey(Creator)
-    video = models.ForeignKey(Video)
-    relatedChips = models.ManyToManyField('self', null = True, blank = True, symmetrical = False)
-    
-    def __unicode__(self):
-        return self.creator.name + " / " + self.video.title + " chip "
-        
-class Status(models.Model):
-    MOD_STATES = (  ("dead", "Not Used"),
-                    ("major", "Major Status"),
-                    ("minor", "Minor Status"),
-                 )
-
-    state = models.CharField(max_length = 5, choices = MOD_STATES, default = "dead")
-    created = models.DateTimeField()
-    status = models.CharField(max_length = 140)
-    user = models.CharField(max_length = 140)
-    room = models.ForeignKey(Room)
-    
-    def __unicode__(self):
-        return '[' + self.state + '] ' + self.status
-
-class LivePhoto(models.Model):
-    image = models.ImageField(upload_to = "image/photos/%H/%m")
+class Photo(models.Model):
+    image = models.ImageField(upload_to = "image/upload/photo/%Y-%m-%d")
     created = models.DateTimeField(auto_now_add = True)
-'''
+    author = models.CharField(max_length = 140, blank = True)

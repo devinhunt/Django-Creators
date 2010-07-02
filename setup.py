@@ -3,7 +3,6 @@ from setuptools import setup, find_packages
 setup(
     name = "django-creators",
     version = "0.2",
-    url = 'http://hailpixel.com',
     packages = find_packages('src'),
     package_dir = {'': 'src'},
     
@@ -12,7 +11,7 @@ setup(
                         'zc.buildout',
                         'zc.recipe.egg',
                         'South',
-                        "simplejson",
+                        'simplejson',
                         ],
     
     # Author Information
