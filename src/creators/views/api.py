@@ -1,9 +1,27 @@
 from creators.models import *
 from django.core import serializers
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+
+# User Methods
+
+def user_create(request):
+    request_name = request.GET.get('username', None)
+    print request_name
+    if request_name:
+        count = 1
+        user, created = PartyUser.objects.get_or_create(name = request_name)
+        
+        while not created:
+            new_name = '%s%i' % (request_name, count)
+            user, created = PartyUser.objects.get_or_create(name = new_name)
+            count = count + 1
+        
+        return HttpResponse(serializers.serialize("json", [user], ensure_ascii = True))
+        
+    else:
+        raise Http404
 
 # Direct Model Access
-
 def json_schedule(request):
     return HttpResponse('{ "events" : ' + serializers.serialize("json", Event.objects.all(), ensure_ascii = True) + ', ' +
                            '"chips" : ' + serializers.serialize("json", EventChip.objects.all(), ensure_ascii = True) + '}')
@@ -39,6 +57,7 @@ def json_livephoto_latest(request):
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
+    url(r'^user/create/$', user_create, name = "user_create"),
     url(r'^schedule/$', json_schedule, name = "json_schedule"),
     url(r'^creator/$', json_creator, name = "json_creator"),
     url(r'^creatorchips/$', json_creator_chips, name = "json_creator_chips"),

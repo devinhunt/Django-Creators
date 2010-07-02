@@ -48,6 +48,7 @@ class Event(models.Model):
     room = models.ForeignKey(Room)
     event_type = models.ForeignKey(EventType)
     description = models.TextField(blank = True)
+    detail_url = models.URLField(blank = True)
     start = models.DateTimeField()
     end = models.DateTimeField()
 
@@ -67,7 +68,7 @@ class Status(models.Model):
     state = models.CharField(max_length = 5, choices = MOD_STATES, default = "dead")
     created = models.DateTimeField(default = datetime.now())
     status = models.CharField(max_length = 140)
-    author = models.CharField(max_length = 140)
+    author = models.CharField(max_length = 140) 
 
     def __unicode__(self):
         return '[' + self.state + '] ' + self.status
@@ -84,8 +85,10 @@ class PartyUser(models.Model):
     current_status = models.ForeignKey(Status, blank = True, null = True)
     current_room = models.ForeignKey(Room, blank = True, null = True)
     friends = models.ForeignKey('self', blank = True, null = True)
+    events = models.ForeignKey(Event, blank = True, null = True)
     
     def save(self, *args, **kwargs):
+        '''Overrideen save function generates the api key for the user'''
         self.api_key = hashlib.md5(datetime.now().isoformat() + " " + self.name).hexdigest()
         super(PartyUser, self).save(*args, **kwargs)
     
