@@ -89,7 +89,8 @@ class PartyUser(models.Model):
     
     def save(self, *args, **kwargs):
         '''Overrideen save function generates the api key for the user'''
-        self.api_key = hashlib.md5(datetime.now().isoformat() + " " + self.name).hexdigest()
+        if not self.api_key:
+            self.api_key = hashlib.md5(datetime.now().isoformat() + " " + self.name).hexdigest()
         super(PartyUser, self).save(*args, **kwargs)
     
     def __unicode__(self):

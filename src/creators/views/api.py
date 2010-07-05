@@ -60,11 +60,19 @@ def status(request, pk = None):
         return HttpResponse(serializers.serialize("json", Status.objects.all(), ensure_ascii = True))
         
 def add_status(request):
-    user = get_user_from_key(request)
-    msg = request.GET.get('status')
-    status = Status(status = msg, author = user.name)
-    status.save()
-    return HttpResponse('{"msg" : "Status Set"}')
+    if request.method == 'POST':
+        user = get_user_from_key(request)
+        msg = request.POST.get('status')
+        
+        status = Status(status = msg, author = user.name)
+        status.save()
+        
+        user.current_status = status;
+        user.save()
+        
+        return HttpResponse('{"msg" : "Status Set"}')
+    else:
+        return api_response(False, 'Bad POST data')
 
 
 # Direct Model Access
@@ -118,16 +126,19 @@ def api_response(success, msg = '', data = None):
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
+    # Users
     url(r'^user/create/$', user_create, name = "api_user_create"),
     url(r'^user/friends/$', user_list_friends, name = "api_list_friends"),
     url(r'^user/friends/add/$', user_add_friend, name = "api_add_friend"),
     url(r'^user/friends/remove/$', user_remove_friend, name = "api_remove_friend"),
     url(r'^user/events/$', user_create, name = "api_list_events"),
     
+    #Status'
     url(r'^status/$', status, name = "api_status"),
     url(r'^status/since/(?P<pk>\d+)$', status, name = "api_status_since"),
-    url(r'^status/create/$', add_status, name = "api_status"),
+    url(r'^status/add/$', add_status, name = "api_add_status"),
     
+    #Events
     url(r'^schedule/$', json_schedule, name = "api_schedule"),
     url(r'^creator/$', json_creator, name = "api_creator"),
     url(r'^creatorchips/$', json_creator_chips, name = "api_creator_chips"),
