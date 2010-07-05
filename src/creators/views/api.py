@@ -26,10 +26,17 @@ def user_create(request):
         
 def user_list_friends(request):
     user = get_user_from_key(request)
-    return api_response(True, 'List of friends for %s' % user.name, serializers.serialize('json', user.friends.all(), use_natural_keys=True, ensure_ascii = True))
+    return api_response(True, 'List of friends for %s' % user.name, serializers.serialize('json', user.friends.all(), ensure_ascii = True))
     
 def user_list_friend_status(request):
     user = get_user_from_key(request)
+    statuses = []
+    
+    for friend in user.friends.all():
+        if friend.current_status:
+            statuses.append(friend.current_status)
+    
+    return api_response(True, 'List of friends for %s' % user.name, serializers.serialize('json', statuses, ensure_ascii = True))
     pass
         
 # User POST methods
