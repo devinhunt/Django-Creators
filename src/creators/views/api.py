@@ -2,7 +2,11 @@ from creators.models import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
+
 # User GET Methods
+
+def users(request):
+    return api_response(True, "All users", serializers.serialize("json", PartyUser.objects.all(), ensure_ascii = True))
 
 def user_create(request):
     request_name = request.GET.get('username', None)
@@ -51,14 +55,17 @@ def user_remove_friend(request):
     except:
         return api_response(False, "No friendship found.")
         
-#Status methods
+#Status GET
 
 def status(request, pk = None):
     if pk:
         return HttpResponse(serializers.serialize("json", Status.objects.filter(pk__gt = pk).order_by('-created'), ensure_ascii = True))
     else:
+
         return HttpResponse(serializers.serialize("json", Status.objects.all().order_by('-created'), ensure_ascii = True))
-        
+
+#Status POST
+
 def add_status(request):
     if request.method == 'POST':
         user = get_user_from_key(request)
@@ -70,9 +77,13 @@ def add_status(request):
         user.current_status = status;
         user.save()
         
-        return HttpResponse('{"msg" : "Status Set"}')
+        return api_response(True, 'Status set for %s' % (user.name), serializers.serialize("json", [status], ensure_ascii = True))
     else:
         return api_response(False, 'Bad POST data')
+
+# Event GET
+def events(request):
+    return api_response(True, 'All Events', serializers.serialize("json", Event.objects.all(), ensure_ascii = True))
 
 
 # Direct Model Access
@@ -127,6 +138,7 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     # Users
+    url(r'^user/$', users, name = "api_users"),
     url(r'^user/create/$', user_create, name = "api_user_create"),
     url(r'^user/friends/$', user_list_friends, name = "api_list_friends"),
     url(r'^user/friends/add/$', user_add_friend, name = "api_add_friend"),
@@ -139,7 +151,8 @@ urlpatterns = patterns('',
     url(r'^status/add/$', add_status, name = "api_add_status"),
     
     #Events
-    url(r'^schedule/$', json_schedule, name = "api_schedule"),
+    url(r'^events/$', events, name = "api_events"),
+    
     url(r'^creator/$', json_creator, name = "api_creator"),
     url(r'^creatorchips/$', json_creator_chips, name = "api_creator_chips"),
     url(r'^room/$', json_room, name = "api_room"),

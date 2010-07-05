@@ -14,10 +14,11 @@ class CreatorAdmin(admin.ModelAdmin):
         
     ]
 
-admin.site.register(Status);
-admin.site.register(Creator, CreatorAdmin);
-admin.site.register(Floor, FloorAdmin);
-admin.site.register(Room);
-admin.site.register(Event);
-admin.site.register(Photo);
+admin.site.register(Status)
+admin.site.register(Creator, CreatorAdmin)
+admin.site.register(Floor, FloorAdmin)
+admin.site.register(Room)
+admin.site.register(Event)
+admin.site.register(EventType)
+admin.site.register(Photo)
 admin.site.register(PartyUser)

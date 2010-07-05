@@ -41,6 +41,9 @@ class Creator(models.Model):
 class EventType(models.Model):
     name = models.CharField(max_length = 140)
     is_static = models.BooleanField(default = False)
+    
+    def __unicode__(self):
+        return self.name + " type"
         
 class Event(models.Model):
     name = models.CharField(max_length = 140)
