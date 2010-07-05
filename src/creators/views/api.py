@@ -2,6 +2,7 @@ from creators.models import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 # User GET Methods
 
@@ -104,8 +105,20 @@ def add_status(request):
 def events(request):
     return api_response(True, 'All Events', serializers.serialize("json", Event.objects.all(), ensure_ascii = True))
 
+# Photo
+def photo(request, pk = None):
+    return api_response(True, 'All Photos', serializers.serialize("json", Photo.objects.all().order_by('-created'), ensure_ascii = True))
+
+def photo_upload(request):
+    if request.method == 'POST':
+        print request.FILES
+        photo = Photo(image = request.FILES['photo'])
+        photo.save()
+        return api_response(False, 'Upload Successful')
+    else:
+        return api_response(False, 'Improper POST data')
+
 # Direct Model Access
-    
 def json_creator(request):
     return HttpResponse(serializers.serialize("json", Creator.objects.all(), ensure_ascii = True))
     
@@ -170,10 +183,16 @@ urlpatterns = patterns('',
     #Events
     url(r'^events/$', events, name = "api_events"),
     
-    url(r'^creator/$', json_creator, name = "api_creator"),
-    url(r'^creatorchips/$', json_creator_chips, name = "api_creator_chips"),
+    #Rooms
     url(r'^room/$', json_room, name = "api_room"),
     url(r'^floor/$', json_floor, name = "api_floor"),
+    
+    #Photo
+    url(r'^photo/$', photo, name = "api_photo"),
+    url(r'^photo/upload/$', photo_upload, name = "api_photo_upload"),
+    
+    url(r'^creator/$', json_creator, name = "api_creator"),
+    url(r'^creatorchips/$', json_creator_chips, name = "api_creator_chips"),
     url(r'^videos/$', json_videos, name = "api_videos"),
     
     url(r'^livephoto/$', json_livephoto, name = "api_livephoto"),
