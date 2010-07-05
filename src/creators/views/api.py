@@ -111,8 +111,7 @@ def photo(request, pk = None):
 
 def photo_upload(request):
     if request.method == 'POST':
-        print request.FILES
-        photo = Photo(image = request.FILES['photo'])
+        photo = Photo(image = request.FILES['photo'], author = request.POST.get('author', ''))
         photo.save()
         return api_response(False, 'Upload Successful')
     else:
