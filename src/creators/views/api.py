@@ -20,9 +20,9 @@ def user_create(request):
             user, created = PartyUser.objects.get_or_create(name = new_name)
             count = count + 1
         
-        return api_response(True, "User created", serializers.serialize("json", [user], ensure_ascii = True))
+        return api_response(True, 'User created', serializers.serialize("json", [user], ensure_ascii = True))
     else:
-        return api_response(False, "No username specified.")
+        return api_response(False, 'No username specified.')
         
 def user_list_friends(request):
     user = get_user_from_key(request)
@@ -55,6 +55,14 @@ def user_remove_friend(request):
     except:
         return api_response(False, "No friendship found.")
         
+def user_checkin(request):
+    user = get_user_from_key(request)
+    user.x = request.POST.get('x')
+    user.y = request.POST.get('y')
+    user.current_floor = Floor.objects.get(pk = request.POST.get('floor'))
+    user.save()
+    return api_response(True, 'User checked in')
+        
 #Status GET
 
 def status(request, pk = None):
@@ -85,11 +93,7 @@ def add_status(request):
 def events(request):
     return api_response(True, 'All Events', serializers.serialize("json", Event.objects.all(), ensure_ascii = True))
 
-
 # Direct Model Access
-def json_schedule(request):
-    return HttpResponse('{ "events" : ' + serializers.serialize("json", Event.objects.all(), ensure_ascii = True) + ', ' +
-                           '"chips" : ' + serializers.serialize("json", EventChip.objects.all(), ensure_ascii = True) + '}')
     
 def json_creator(request):
     return HttpResponse(serializers.serialize("json", Creator.objects.all(), ensure_ascii = True))
@@ -140,6 +144,7 @@ urlpatterns = patterns('',
     # Users
     url(r'^user/$', users, name = "api_users"),
     url(r'^user/create/$', user_create, name = "api_user_create"),
+    url(r'^user/checkin/$', user_checkin, name = "api_user_checkin"),
     url(r'^user/friends/$', user_list_friends, name = "api_list_friends"),
     url(r'^user/friends/add/$', user_add_friend, name = "api_add_friend"),
     url(r'^user/friends/remove/$', user_remove_friend, name = "api_remove_friend"),

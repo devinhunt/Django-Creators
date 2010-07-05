@@ -80,15 +80,15 @@ class PartyUser(models.Model):
     name = models.CharField(max_length = 100)
     created = models.DateTimeField(auto_now_add = True)
     api_key = models.CharField(max_length = 100, blank = True)
-    phone_number = models.CharField(max_length = 20, blank = True)
     
     x = models.IntegerField(default = 0)
     y = models.IntegerField(default = 0)
     
-    current_status = models.ForeignKey(Status, blank = True, null = True)
-    current_room = models.ForeignKey(Room, blank = True, null = True)
     friends = models.ManyToManyField('self', blank = True, null = True, symmetrical = False)
-    events = models.ForeignKey(Event, blank = True, null = True)
+    events = models.ManyToManyField(Event, blank = True, null = True)
+    
+    current_status = models.ForeignKey(Status, blank = True, null = True)
+    current_floor = models.ForeignKey(Floor, blank = True, null = True)
     
     def save(self, *args, **kwargs):
         '''Overrideen save function generates the api key for the user'''
