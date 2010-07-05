@@ -55,9 +55,9 @@ def user_remove_friend(request):
 
 def status(request, pk = None):
     if pk:
-        return HttpResponse(serializers.serialize("json", Status.objects.filter(pk__gt = pk), ensure_ascii = True))
+        return HttpResponse(serializers.serialize("json", Status.objects.filter(pk__gt = pk).order_by('-created'), ensure_ascii = True))
     else:
-        return HttpResponse(serializers.serialize("json", Status.objects.all(), ensure_ascii = True))
+        return HttpResponse(serializers.serialize("json", Status.objects.all().order_by('-created'), ensure_ascii = True))
         
 def add_status(request):
     if request.method == 'POST':

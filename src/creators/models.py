@@ -68,7 +68,7 @@ class Status(models.Model):
     state = models.CharField(max_length = 5, choices = MOD_STATES, default = "dead")
     created = models.DateTimeField(default = datetime.now())
     status = models.CharField(max_length = 140)
-    author = models.CharField(max_length = 140) 
+    author = models.CharField(max_length = 140)
 
     def __unicode__(self):
         return '[' + self.state + '] ' + self.status
