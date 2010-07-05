@@ -2,7 +2,7 @@ from creators.models import *
 from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
-# User Methods
+# User GET Methods
 
 def user_create(request):
     request_name = request.GET.get('username', None)
@@ -16,10 +16,40 @@ def user_create(request):
             user, created = PartyUser.objects.get_or_create(name = new_name)
             count = count + 1
         
-        return HttpResponse(serializers.serialize("json", [user], ensure_ascii = True))
-        
+        return api_response(True, "User created", serializers.serialize("json", [user], ensure_ascii = True))
     else:
-        raise Http404
+        return api_response(False, "No username specified.")
+        
+def user_list_friends(request):
+    user = get_user_from_key(request)
+    return api_response(True, 'List of friends for %s' % user.name, serializers.serialize("json", user.friends.all(), ensure_ascii = True))
+        
+# User POST methods
+
+def user_add_friend(request):
+    user = get_user_from_key(request)
+    
+    try:
+        friend = PartyUser.objects.get(name = request.POST['username'])
+        
+        try:
+            current_friend = user.friends.get(pk = friend.pk)
+            return api_response(False, '%s has already friended %s' % (user.name, friend.name))
+        except:
+            user.friends.add(friend)
+            return api_response(True, friend.name + " added as friend.", serializers.serialize("json", [user], ensure_ascii = True))
+    except:
+        return api_response(False, "The friend you wish to add does not exist.")
+        
+def user_remove_friend(request):
+    user = get_user_from_key(request)
+    
+    try:
+        friend = PartyUser.objects.get(name = request.POST['username'])
+        user.friends.remove(friend)
+        return api_response(True, "Friendship broken.")
+    except:
+        return api_response(False, "No friendship found.")
         
 #Status methods
 
@@ -35,6 +65,7 @@ def add_status(request):
     status = Status(status = msg, author = user.name)
     status.save()
     return HttpResponse('{"msg" : "Status Set"}')
+
 
 # Direct Model Access
 def json_schedule(request):
@@ -66,12 +97,32 @@ def json_livephoto_latest(request):
 # Helper Function
 
 def get_user_from_key(request):
-    return get_object_or_404(PartyUser, api_key = request.GET['key']);
+    if request.method == 'POST':
+        print request.POST['key']
+        return get_object_or_404(PartyUser, api_key = request.POST['key']);
+    else:
+        return get_object_or_404(PartyUser, api_key = request.GET['key']);
+    
+def api_response(success, msg = '', data = None):
+    response = '{"success" : "%s", "msg" : "%s"' % (success, msg)
+    
+    if data:
+        response = response + ', "data" : %s' % data
+    response = response + '}'
+    
+    return HttpResponse(response)
+
+
+# Urls
 
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     url(r'^user/create/$', user_create, name = "api_user_create"),
+    url(r'^user/friends/$', user_list_friends, name = "api_list_friends"),
+    url(r'^user/friends/add/$', user_add_friend, name = "api_add_friend"),
+    url(r'^user/friends/remove/$', user_remove_friend, name = "api_remove_friend"),
+    url(r'^user/events/$', user_create, name = "api_list_events"),
     
     url(r'^status/$', status, name = "api_status"),
     url(r'^status/since/(?P<pk>\d+)$', status, name = "api_status_since"),

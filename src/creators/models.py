@@ -84,7 +84,7 @@ class PartyUser(models.Model):
     
     current_status = models.ForeignKey(Status, blank = True, null = True)
     current_room = models.ForeignKey(Room, blank = True, null = True)
-    friends = models.ForeignKey('self', blank = True, null = True)
+    friends = models.ManyToManyField('self', blank = True, null = True, symmetrical = False)
     events = models.ForeignKey(Event, blank = True, null = True)
     
     def save(self, *args, **kwargs):
