@@ -133,13 +133,6 @@ def json_room(request):
 def json_floor(request):
     return HttpResponse(serializers.serialize("json", Floor.objects.all(), ensure_ascii = True))
     
-def json_livephoto(request, pk = None):
-    return HttpResponse(serializers.serialize("json", LivePhoto.objects.all().order_by('-created'), ensure_ascii = True))
-    
-def json_livephoto_latest(request):
-    photo = LivePhoto.objects.all().order_by('-pk')[0:1]
-    return HttpResponse(serializers.serialize("json", photo, ensure_ascii = True))
-    
 # Helper Function
 
 def get_user_from_key(request):
@@ -193,7 +186,4 @@ urlpatterns = patterns('',
     url(r'^creator/$', json_creator, name = "api_creator"),
     url(r'^creatorchips/$', json_creator_chips, name = "api_creator_chips"),
     url(r'^videos/$', json_videos, name = "api_videos"),
-    
-    url(r'^livephoto/$', json_livephoto, name = "api_livephoto"),
-    url(r'^livephoto/latest/', json_livephoto_latest, name = "api_livephoto_latest"),
 )
