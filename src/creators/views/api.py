@@ -160,14 +160,14 @@ from django.conf.urls.defaults import *
 
 urlpatterns = patterns('',
     # Users
-    url(r'^user/$', users, name = "api_users"),
-    url(r'^user/create/$', user_create, name = "api_user_create"),
-    url(r'^user/checkin/$', user_checkin, name = "api_user_checkin"),
-    url(r'^user/friends/$', user_list_friends, name = "api_list_friends"),
-    url(r'^user/friends/add/$', user_add_friend, name = "api_add_friend"),
-    url(r'^user/friends/remove/$', user_remove_friend, name = "api_remove_friend"),
-    url(r'^user/friends/status/$', user_list_friend_status, name = "api_list_friends_status"),
-    url(r'^user/events/$', user_create, name = "api_list_events"),
+    url(r'^users/$', users, name = "api_users"),
+    url(r'^users/create/$', user_create, name = "api_user_create"),
+    url(r'^users/checkin/$', user_checkin, name = "api_user_checkin"),
+    url(r'^users/friends/$', user_list_friends, name = "api_list_friends"),
+    url(r'^users/friends/add/$', user_add_friend, name = "api_add_friend"),
+    url(r'^users/friends/remove/$', user_remove_friend, name = "api_remove_friend"),
+    url(r'^users/friends/status/$', user_list_friend_status, name = "api_list_friends_status"),
+    url(r'^users/events/$', user_create, name = "api_list_events"),
     
     #Status'
     url(r'^status/$', status, name = "api_status"),
@@ -178,12 +178,12 @@ urlpatterns = patterns('',
     url(r'^events/$', events, name = "api_events"),
     
     #Rooms
-    url(r'^room/$', json_room, name = "api_room"),
-    url(r'^floor/$', json_floor, name = "api_floor"),
+    url(r'^rooms/$', json_room, name = "api_room"),
+    url(r'^floors/$', json_floor, name = "api_floor"),
     
     #Photo
-    url(r'^photo/$', photo, name = "api_photo"),
-    url(r'^photo/upload/$', photo_upload, name = "api_photo_upload"),
+    url(r'^photos/$', photo, name = "api_photo"),
+    url(r'^photos/upload/$', photo_upload, name = "api_photo_upload"),
     
     # Direct Model Access
     url(r'^creator/$', json_creator, name = "api_creator"),
