@@ -146,16 +146,16 @@ def assets(request):
 # Direct Model Access
 
 def json_creator(request):
-    return HttpResponse(serializers.serialize("json", Creator.objects.all(), ensure_ascii = True))
+    return api_response(True, 'All Creators', serializers.serialize("json", Creator.objects.all(), ensure_ascii = True))
     
 def json_videos(request):
     return HttpResponse(serializers.serialize("json", Video.objects.all(), ensure_ascii = True))
 
 def json_room(request):
-    return HttpResponse(serializers.serialize("json", Room.objects.all(), ensure_ascii = True))
+    return api_response(True, 'All Rooms', serializers.serialize("json", Room.objects.all(), ensure_ascii = True))
 
 def json_floor(request):
-    return HttpResponse(serializers.serialize("json", Floor.objects.all(), ensure_ascii = True))
+    return api_response(True, 'All Floors', serializers.serialize("json", Floor.objects.all(), ensure_ascii = True))
 
 
 # Helper Function
@@ -214,6 +214,6 @@ urlpatterns = patterns('',
     url(r'^assets/$', assets),
     
     # Direct Model Access
-    url(r'^creator/$', json_creator, name = "api_creator"),
+    url(r'^creators/$', json_creator, name = "api_creator"),
     url(r'^videos/$', json_videos, name = "api_videos"),
 )
