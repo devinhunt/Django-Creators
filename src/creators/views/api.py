@@ -42,6 +42,12 @@ def user_list_friend_status(request):
     
 # User POST methods
 
+def user_rename(request):
+    user = get_user_from_key(request)
+    user.name = request.POST.get('username')
+    user.save()
+    return api_response(True, 'User name changed', serializers.serialize("json", [user], ensure_ascii = True))
+    
 def user_add_friend(request):
     user = get_user_from_key(request)
     
@@ -186,6 +192,7 @@ urlpatterns = patterns('',
     url(r'^users/friends/remove/$', user_remove_friend, name = "api_remove_friend"),
     url(r'^users/friends/status/$', user_list_friend_status, name = "api_list_friends_status"),
     url(r'^users/events/$', user_create, name = "api_list_events"),
+    url(r'^users/rename/$', user_rename),
     
     # Status'
     url(r'^status/$', status, name = "api_status"),

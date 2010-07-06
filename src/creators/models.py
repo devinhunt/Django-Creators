@@ -11,10 +11,17 @@ class Metadata(models.Model):
         return 'key %s ' % (self.name)
         
 class Asset(models.Model):
-    key = models.CharField(max_length = 100)
+    key = models.CharField(max_length = 100, primary_key = True)
     image = models.ImageField(upload_to = "image/asset/%Y-%m-%d")
+    
+class IconBase(models.Model):
+    ''' All models that need to use assets directly should extend this base '''
+    icon = models.ForeignKey(Asset, null = True, blank = True)
+    
+    class Meta:
+        abstract = True
 
-class Floor(models.Model):
+class Floor(IconBase):
     order = models.IntegerField(default = 0)
     name = models.CharField(max_length = 140, blank = True)
 
@@ -24,14 +31,26 @@ class Floor(models.Model):
     def __unicode__(self):
         return self.name
 
-class Room(models.Model):
+class Room(IconBase):
+    ROOM_TYPE = ( ("normal", "Normal Room"),
+                  ("bathroom", "Bathroom"),
+                  ("exit", "Exit"),
+                  ("stairs", "Stairway"),
+                  ("food", "Food"),
+                  ("drinks", "Drinks"),
+                  ("info", "Information Point"),
+                  ("elevator", "Elevator"),
+                )
+    
     name = models.CharField(max_length = 140)
-    floor = models.ForeignKey(Floor)
+    room_type = models.CharField(max_length = 8, choices = ROOM_TYPE, default = "normal")
+    
     x = models.IntegerField(default = 0)
     y = models.IntegerField(default = 0)
-    width = models.IntegerField(default = 100)
-    height = models.IntegerField(default = 100)
-
+    width = models.IntegerField(default = 10)
+    height = models.IntegerField(default = 10)
+    floor = models.ForeignKey(Floor)
+    
     def __unicode__(self):
         return self.name + " on the " + self.floor.name
 
@@ -40,12 +59,12 @@ class Creator(models.Model):
                       ("film", "Film"),
                       ("fashion", "Fashion"),
                      )
+    
     name = models.CharField(max_length = 200)
     theme = models.CharField(max_length = 10, choices = CREATOR_THEMES)
     local_thumbname = models.CharField(max_length = 200, blank = True)
     thumbnail = models.ImageField(upload_to = "image/creator/%Y-%m-%d", blank = True)
     description = models.TextField(blank = True)
-    
     
     def __unicode__(self):
         return self.name
@@ -57,13 +76,15 @@ class EventType(models.Model):
     def __unicode__(self):
         return self.name + " type"
 
-class Event(models.Model):
+class Event(IconBase):
     name = models.CharField(max_length = 140)
+    
     creator = models.ForeignKey(Creator)
     room = models.ForeignKey(Room)
     event_type = models.ForeignKey(EventType)
     description = models.TextField(blank = True)
     detail_url = models.URLField(blank = True)
+    
     start = models.DateTimeField()
     end = models.DateTimeField()
 
