@@ -103,7 +103,9 @@ def add_status(request):
 
 # Event GET
 def events(request):
-    return api_response(True, 'All Events', serializers.serialize("json", Event.objects.all(), ensure_ascii = True))
+    result = '{ "events" : %s, "event_types": %s}' % (serializers.serialize("json", Event.objects.all(), ensure_ascii = True),
+                                                      serializers.serialize("json", EventType.objects.all(), ensure_ascii = True))
+    return api_response(True, 'All Events', result)
 
 # Photo
 def photo(request, pk = None):
@@ -111,9 +113,10 @@ def photo(request, pk = None):
 
 def photo_upload(request):
     if request.method == 'POST':
+        print request.FILES
         photo = Photo(image = request.FILES['photo'], author = request.POST.get('author', ''))
         photo.save()
-        return api_response(False, 'Upload Successful')
+        return api_response(True, 'Upload Successful')
     else:
         return api_response(False, 'Improper POST data')
 

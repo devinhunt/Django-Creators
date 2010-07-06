@@ -112,6 +112,12 @@ class PartyUser(models.Model):
         return self.name + ' (created ' + self.created.isoformat() + ')'
 
 class Photo(models.Model):
+    
+    MOD_STATES = (  ("dead", "Not Used"),
+                    ("live", "Live Photo"),
+                 )
+    
     image = models.ImageField(upload_to = "image/upload/photo/%Y-%m-%d")
+    state = models.CharField(max_length = 4, choices = MOD_STATES, default = "dead")
     created = models.DateTimeField(auto_now_add = True)
     author = models.CharField(max_length = 140, blank = True)
