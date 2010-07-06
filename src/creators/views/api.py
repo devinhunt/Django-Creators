@@ -11,7 +11,6 @@ def users(request):
 
 def user_create(request):
     request_name = request.GET.get('username', None)
-    print request_name
     if request_name:
         count = 1
         user, created = PartyUser.objects.get_or_create(name = request_name)
@@ -113,7 +112,6 @@ def photo(request, pk = None):
 
 def photo_upload(request):
     if request.method == 'POST':
-        print request.FILES
         photo = Photo(image = request.FILES['photo'], author = request.POST.get('author', ''))
         photo.save()
         return api_response(True, 'Upload Successful')
@@ -137,7 +135,6 @@ def json_floor(request):
 
 def get_user_from_key(request):
     if request.method == 'POST':
-        print request.POST['key']
         return get_object_or_404(PartyUser, api_key = request.POST['key']);
     else:
         return get_object_or_404(PartyUser, api_key = request.GET['key']);
