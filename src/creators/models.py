@@ -2,6 +2,14 @@ from django.db import models
 from datetime import datetime, timedelta
 import hashlib
 
+class Metadata(models.Model):
+    name = models.CharField(max_length = 140)
+    value = models.CharField(max_length = 140, blank = True)
+    timestamp = models.DateTimeField()
+    
+    def __unicode__(self):
+        return 'key %s ' % (self.name)
+
 class Floor(models.Model):
     order = models.IntegerField(default = 0)
     name = models.CharField(max_length = 140, blank = True)

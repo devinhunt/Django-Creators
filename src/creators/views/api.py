@@ -124,9 +124,6 @@ def photo_upload(request):
 def json_creator(request):
     return HttpResponse(serializers.serialize("json", Creator.objects.all(), ensure_ascii = True))
     
-def json_creator_chips(request):
-    return HttpResponse(serializers.serialize("json", CreatorChip.objects.all(), ensure_ascii = True))
-    
 def json_videos(request):
     return HttpResponse(serializers.serialize("json", Video.objects.all(), ensure_ascii = True))
 
@@ -146,7 +143,9 @@ def get_user_from_key(request):
         return get_object_or_404(PartyUser, api_key = request.GET['key']);
     
 def api_response(success, msg = '', data = None):
-    response = '{"success" : "%s", "msg" : "%s"' % (success, msg)
+    valid_date = Metadata.objects.get(name = 'valid_from')
+    
+    response = '{"success" : "%s", "msg" : "%s", "valid_from" : "%s"' % (success, msg, valid_date.timestamp.__str__())
     
     if data:
         response = response + ', "data" : %s' % data
@@ -186,7 +185,7 @@ urlpatterns = patterns('',
     url(r'^photo/$', photo, name = "api_photo"),
     url(r'^photo/upload/$', photo_upload, name = "api_photo_upload"),
     
+    # Direct Model Access
     url(r'^creator/$', json_creator, name = "api_creator"),
-    url(r'^creatorchips/$', json_creator_chips, name = "api_creator_chips"),
     url(r'^videos/$', json_videos, name = "api_videos"),
 )
