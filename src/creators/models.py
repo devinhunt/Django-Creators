@@ -9,6 +9,10 @@ class Metadata(models.Model):
     
     def __unicode__(self):
         return 'key %s ' % (self.name)
+        
+class Asset(models.Model):
+    key = models.CharField(max_length = 100)
+    image = models.ImageField(upload_to = "image/asset/%Y-%m-%d")
 
 class Floor(models.Model):
     order = models.IntegerField(default = 0)
@@ -39,7 +43,7 @@ class Creator(models.Model):
     name = models.CharField(max_length = 200)
     theme = models.CharField(max_length = 10, choices = CREATOR_THEMES)
     local_thumbname = models.CharField(max_length = 200, blank = True)
-    thumbnail = models.ImageField(upload_to = "image/upload/chips/%Y-%m-%d", blank = True)
+    thumbnail = models.ImageField(upload_to = "image/creator/%Y-%m-%d", blank = True)
     description = models.TextField(blank = True)
     
     
@@ -52,7 +56,7 @@ class EventType(models.Model):
     
     def __unicode__(self):
         return self.name + " type"
-        
+
 class Event(models.Model):
     name = models.CharField(max_length = 140)
     creator = models.ForeignKey(Creator)
@@ -125,7 +129,7 @@ class Photo(models.Model):
                     ("live", "Live Photo"),
                  )
     
-    image = models.ImageField(upload_to = "image/upload/photo/%Y-%m-%d")
+    image = models.ImageField(upload_to = "image/photo/%Y-%m-%d")
     state = models.CharField(max_length = 4, choices = MOD_STATES, default = "dead")
     created = models.DateTimeField(auto_now_add = True)
     author = models.CharField(max_length = 140, blank = True)

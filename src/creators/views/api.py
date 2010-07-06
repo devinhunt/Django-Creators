@@ -10,7 +10,7 @@ def users(request):
     return api_response(True, "All users", serializers.serialize("json", PartyUser.objects.all(), ensure_ascii = True))
 
 def user_create(request):
-    request_name = request.GET.get('username', None)
+    request_name = request.GET.get('username', 'Guest')
     if request_name:
         count = 1
         user, created = PartyUser.objects.get_or_create(name = request_name)
@@ -36,9 +36,10 @@ def user_list_friend_status(request):
         if friend.current_status:
             statuses.append(friend.current_status)
     
-    return api_response(True, 'List of friends for %s' % user.name, serializers.serialize('json', statuses, ensure_ascii = True))
+    return api_response(True, 'List of friend statuses for %s' % user.name, serializers.serialize('json', statuses, ensure_ascii = True))
     pass
-        
+    
+    
 # User POST methods
 
 def user_add_friend(request):
@@ -49,7 +50,7 @@ def user_add_friend(request):
         
         try:
             current_friend = user.friends.get(pk = friend.pk)
-            return api_response(False, '%s has already friended %s' % (user.name, friend.name))
+            return api_response(False, '%s has already friended %s' % (user.name, friend.name), serializers.serialize("json", [user], ensure_ascii = True))
         except:
             user.friends.add(friend)
             return api_response(True, friend.name + " added as friend.", serializers.serialize("json", [user], ensure_ascii = True))
@@ -62,7 +63,7 @@ def user_remove_friend(request):
     try:
         friend = PartyUser.objects.get(name = request.POST['username'])
         user.friends.remove(friend)
-        return api_response(True, "Friendship broken.")
+        return api_response(True, "Friendship broken.", serializers.serialize('json', statuses, ensure_ascii = True))
     except:
         return api_response(False, "No friendship found.")
         
@@ -74,6 +75,7 @@ def user_checkin(request):
     user.save()
     return api_response(True, 'User checked in')
         
+
 #Status GET
 
 def status(request, pk = None):
@@ -82,6 +84,7 @@ def status(request, pk = None):
     else:
 
         return HttpResponse(serializers.serialize("json", Status.objects.all().order_by('-created'), ensure_ascii = True))
+
 
 #Status POST
 
@@ -100,13 +103,18 @@ def add_status(request):
     else:
         return api_response(False, 'Bad POST data')
 
+
+
 # Event GET
+
 def events(request):
     result = '{ "events" : %s, "event_types": %s}' % (serializers.serialize("json", Event.objects.all(), ensure_ascii = True),
                                                       serializers.serialize("json", EventType.objects.all(), ensure_ascii = True))
     return api_response(True, 'All Events', result)
 
+
 # Photo
+
 def photo(request, pk = None):
     return api_response(True, 'All Photos', serializers.serialize("json", Photo.objects.all().order_by('-created'), ensure_ascii = True))
 
@@ -118,7 +126,19 @@ def photo_upload(request):
     else:
         return api_response(False, 'Improper POST data')
 
+
+# Assets
+
+def assets(request):
+    asset_key = request.GET.get("key", None)
+    if asset_key:
+        return api_response(True, "Single Asset", serializers.serialize("json", [Asset.objects.get(key = asset_key)], ensure_ascii = True))
+    else:
+        return api_response(True, "Full Asset List", serializers.serialize("json", Asset.objects.all(), ensure_ascii = True))
+
+
 # Direct Model Access
+
 def json_creator(request):
     return HttpResponse(serializers.serialize("json", Creator.objects.all(), ensure_ascii = True))
     
@@ -130,7 +150,8 @@ def json_room(request):
 
 def json_floor(request):
     return HttpResponse(serializers.serialize("json", Floor.objects.all(), ensure_ascii = True))
-    
+
+
 # Helper Function
 
 def get_user_from_key(request):
@@ -140,9 +161,9 @@ def get_user_from_key(request):
         return get_object_or_404(PartyUser, api_key = request.GET['key']);
     
 def api_response(success, msg = '', data = None):
-    valid_date = Metadata.objects.get(name = 'valid_from')
+    valid_date = Metadata.objects.get(name = 'last_updated')
     
-    response = '{"success" : "%s", "msg" : "%s", "valid_from" : "%s"' % (success, msg, valid_date.timestamp.__str__())
+    response = '{"success" : "%s", "msg" : "%s", "last_updated" : "%s"' % (success, msg, valid_date.timestamp.__str__())
     
     if data:
         response = response + ', "data" : %s' % data
@@ -166,21 +187,24 @@ urlpatterns = patterns('',
     url(r'^users/friends/status/$', user_list_friend_status, name = "api_list_friends_status"),
     url(r'^users/events/$', user_create, name = "api_list_events"),
     
-    #Status'
+    # Status'
     url(r'^status/$', status, name = "api_status"),
     url(r'^status/since/(?P<pk>\d+)$', status, name = "api_status_since"),
     url(r'^status/add/$', add_status, name = "api_add_status"),
     
-    #Events
-    url(r'^events/$', events, name = "api_events"),
+    # Events
+    url(r'^events/$', events),
     
-    #Rooms
+    # Rooms
     url(r'^rooms/$', json_room, name = "api_room"),
     url(r'^floors/$', json_floor, name = "api_floor"),
     
-    #Photo
+    # Photo
     url(r'^photos/$', photo, name = "api_photo"),
     url(r'^photos/upload/$', photo_upload, name = "api_photo_upload"),
+    
+    # Raw Image Assets
+    url(r'^assets/$', assets),
     
     # Direct Model Access
     url(r'^creator/$', json_creator, name = "api_creator"),
