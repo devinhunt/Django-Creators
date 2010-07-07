@@ -51,6 +51,9 @@ class Room(IconBase):
     height = models.IntegerField(default = 10)
     floor = models.ForeignKey(Floor)
     
+    def contains_point(self, x, y):
+        return x >= self.x and x <= (self.x + self.width) and y >= self.y and y <= (self.y + self.height)
+    
     def __unicode__(self):
         return self.name + " on the " + self.floor.name
 
@@ -123,8 +126,9 @@ class Status(models.Model):
         
 class PartyUser(models.Model):
     name = models.CharField(max_length = 100)
-    created = models.DateTimeField(auto_now_add = True)
     api_key = models.CharField(max_length = 100, blank = True)
+    created = models.DateTimeField(auto_now_add = True)
+    checkin_time = models.DateTimeField(blank = True, null = True)
     
     x = models.IntegerField(default = 0)
     y = models.IntegerField(default = 0)
@@ -134,12 +138,21 @@ class PartyUser(models.Model):
     
     current_status = models.ForeignKey(Status, blank = True, null = True)
     current_floor = models.ForeignKey(Floor, blank = True, null = True)
+    current_room = models.ForeignKey(Room, blank = True, null = True)
     
     def save(self, *args, **kwargs):
-        '''Overrideen save function generates the api key for the user'''
+        ''' Overriden save function generates the api key for the user '''
         if not self.api_key:
             self.api_key = hashlib.md5(datetime.now().isoformat() + " " + self.name).hexdigest()
         super(PartyUser, self).save(*args, **kwargs)
+        
+    def set_current_room(self):
+        ''' Finds a match for current room, or sets the current room to null '''
+        for room in self.current_floor.room_set.all():
+            if room.contains_point(x = self.x, y = self.y):
+                self.current_room = room
+                return True
+        return False
     
     def __unicode__(self):
         return self.name + ' (created ' + self.created.isoformat() + ')'

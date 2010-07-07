@@ -10,7 +10,7 @@ def users(request):
     return api_response(True, "All users", serializers.serialize("json", PartyUser.objects.all(), ensure_ascii = True))
 
 def user_create(request):
-    request_name = request.GET.get('username', 'Guest')
+    request_name = request.GET.get('username', 'Guest').upper()
     if request_name:
         count = 1
         user, created = PartyUser.objects.get_or_create(name = request_name)
@@ -23,6 +23,13 @@ def user_create(request):
         return api_response(True, 'User created', serializers.serialize("json", [user], ensure_ascii = True))
     else:
         return api_response(False, 'No username specified.')
+        
+def user_exists(request):
+    try:
+        user = PartyUser.objects.get(api_key = request.GET['key'])
+        return api_response(True, 'User exists', serializers.serialize("json", [user], ensure_ascii = True))
+    except:
+        return api_response(False, 'No user by that key.')
         
 def user_list_friends(request):
     user = get_user_from_key(request)
@@ -39,12 +46,16 @@ def user_list_friend_status(request):
     return api_response(True, 'List of friend statuses for %s' % user.name, serializers.serialize('json', statuses, ensure_ascii = True))
     pass
     
+def user_events(request):
+    user = get_user_from_key(request)
+    return api_response(True, 'All user favorite events', serializers.serialize('json', user.events.all(), ensure_ascii = True))
+    
     
 # User POST methods
 
 def user_rename(request):
     user = get_user_from_key(request)
-    user.name = request.POST.get('username')
+    user.name = request.POST.get('username').upper()
     user.save()
     return api_response(True, 'User name changed', serializers.serialize("json", [user], ensure_ascii = True))
     
@@ -52,7 +63,7 @@ def user_add_friend(request):
     user = get_user_from_key(request)
     
     try:
-        friend = PartyUser.objects.get(name = request.POST['username'])
+        friend = PartyUser.objects.get(name = request.POST['username'].upper())
         
         try:
             current_friend = user.friends.get(pk = friend.pk)
@@ -67,19 +78,44 @@ def user_remove_friend(request):
     user = get_user_from_key(request)
     
     try:
-        friend = PartyUser.objects.get(name = request.POST['username'])
+        friend = PartyUser.objects.get(name = request.POST['username'].upper())
         user.friends.remove(friend)
-        return api_response(True, "Friendship broken.", serializers.serialize('json', statuses, ensure_ascii = True))
+        return api_response(True, "Friendship broken.", serializers.serialize('json', [user], ensure_ascii = True))
     except:
         return api_response(False, "No friendship found.")
         
 def user_checkin(request):
     user = get_user_from_key(request)
-    user.x = request.POST.get('x')
-    user.y = request.POST.get('y')
+    
+    user.x = int(request.POST.get('x'))
+    user.y = int(request.POST.get('y'))
     user.current_floor = Floor.objects.get(pk = request.POST.get('floor'))
-    user.save()
-    return api_response(True, 'User checked in')
+    
+    if user.set_current_room():
+        user.checkin_time = datetime.now()
+        user.save()
+        return api_response(True, 'User checked in')
+        
+    return api_response(False, 'No Valid Room Found')
+
+def user_add_event(request):
+    user = get_user_from_key(request)
+    try:
+        event = Event.objects.get(pk = request.POST.get('eid'))
+        user.events.add(event)
+        return api_response(True, "Event added to user", serializers.serialize('json', [user], ensure_ascii = True))
+    except:
+        return api_response(False, "No matching event")
+    
+
+def user_remove_event(request):
+    user = get_user_from_key(request)
+    try:
+        event = Event.objects.get(pk = request.POST.get('eid'))
+        user.events.remove(event)
+        return api_response(True, "Event Removed", serializers.serialize('json', [user], ensure_ascii = True))
+    except:
+        return api_response(False, "No matching event")
         
 
 #Status GET
@@ -185,14 +221,18 @@ from django.conf.urls.defaults import *
 urlpatterns = patterns('',
     # Users
     url(r'^users/$', users, name = "api_users"),
+    url(r'^users/exists/$', user_exists),
     url(r'^users/create/$', user_create, name = "api_user_create"),
+    url(r'^users/rename/$', user_rename),
     url(r'^users/checkin/$', user_checkin, name = "api_user_checkin"),
     url(r'^users/friends/$', user_list_friends, name = "api_list_friends"),
     url(r'^users/friends/add/$', user_add_friend, name = "api_add_friend"),
     url(r'^users/friends/remove/$', user_remove_friend, name = "api_remove_friend"),
     url(r'^users/friends/status/$', user_list_friend_status, name = "api_list_friends_status"),
-    url(r'^users/events/$', user_create, name = "api_list_events"),
-    url(r'^users/rename/$', user_rename),
+    url(r'^users/events/$', user_events),
+    url(r'^users/events/add/$', user_add_event),
+    url(r'^users/events/remove/$', user_remove_event),
+    
     
     # Status'
     url(r'^status/$', status, name = "api_status"),
