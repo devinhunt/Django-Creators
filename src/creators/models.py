@@ -14,6 +14,9 @@ class Asset(models.Model):
     key = models.CharField(max_length = 100, primary_key = True)
     image = models.ImageField(upload_to = "image/asset/%Y-%m-%d")
     
+    def __unicode__(self):
+        return self.key
+    
 class IconBase(models.Model):
     ''' All models that need to use assets directly should extend this base '''
     icon = models.ForeignKey(Asset, null = True, blank = True)
