@@ -60,16 +60,17 @@ class Room(IconBase):
     def __unicode__(self):
         return self.name + " on the " + self.floor.name
 
-class Creator(models.Model):
+class Creator(IconBase):
     CREATOR_THEMES = (("music", "Musician"),
                       ("film", "Film"),
                       ("fashion", "Fashion"),
+                      ("artist", "Artist"),
+                      ("photographer", "Photographer"),
+                      ("dj", "DJ"),
                      )
     
     name = models.CharField(max_length = 200)
-    theme = models.CharField(max_length = 10, choices = CREATOR_THEMES)
-    local_thumbname = models.CharField(max_length = 200, blank = True)
-    thumbnail = models.ImageField(upload_to = "image/creator/%Y-%m-%d", blank = True)
+    theme = models.CharField(max_length = 20, choices = CREATOR_THEMES)
     description = models.TextField(blank = True)
     
     def __unicode__(self):

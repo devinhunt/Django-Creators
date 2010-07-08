@@ -48,7 +48,7 @@ FILE_UPLOAD_TEMP_DIR = '/www/Django-Creators/tmp'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = 'http://ec2-184-73-108-19.compute-1.amazonaws.com/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
