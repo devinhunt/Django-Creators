@@ -182,11 +182,20 @@ def bad_date_json(events):
         else:
             end_str = event.end.strftime('%Y-%m-%d %H:%M:%S')
             
-        result += '{"pk": %s, "model": "creators.event", "fields": {"detail_url": "%s", "end": "%s", "event_type": %s, "creator": %s, "name": "%s", "start": "%s", "room": %s, "icon": "%s", "description": "%s"}}' % (event.pk, 
-            event.detail_url, end_str, event.event_type.pk, event.creator.pk, event.name, start_str, event.room.pk, event.icon.pk, event.description)
+        result += '{"pk": %s, "model": "creators.event", "fields": {"detail_url": "%s", "end": "%s", "event_type": %s, "creator": %s, "name": "%s", "start": "%s", "room": %s, "icon": %s, "description": "%s"}}' % (event.pk, 
+            event.detail_url, end_str, hack_get_pk(event.event_type), hack_get_pk(event.creator), event.name, start_str, hack_get_pk(event.room), hack_get_pk(event.icon, True), event.description)
 
     result += ']'
     return result
+    
+def hack_get_pk(obj, quoted = False):
+    try:
+        if quoted:
+            return '"%s"' % (obj.pk)
+        else:
+            return obj.pk
+    except:
+        return 'null'
 
 # Photo
 
