@@ -3,9 +3,11 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from datetime import datetime;
+
+hack_day_date = datetime(2010, 7, 18)
 
 # User GET Methods
-
 def users(request):
     return api_response(True, "All users", serializers.serialize("json", PartyUser.objects.all(), ensure_ascii = True))
 
@@ -153,12 +155,43 @@ def events(request):
     result = '{ "events" : %s, "event_types": %s}' % (serializers.serialize("json", Event.objects.all(), ensure_ascii = True),
                                                       serializers.serialize("json", EventType.objects.all(), ensure_ascii = True))
     return api_response(True, 'All Events', result)
+    
+def events_hack(request):
+    events = Event.objects.all()
+    result = '{ "events" : %s, "event_types": %s}' % (bad_date_json(events),
+                                                      serializers.serialize("json", EventType.objects.all(), ensure_ascii = True))
+    return api_response(True, 'All Events', result)
 
+def bad_date_json(events):
+    result = '['
+    first_loop = True
+    
+    for event in events:
+        if first_loop:
+            first_loop = False
+        else:
+            result += ', '
+            
+        if event.start >= hack_day_date:
+            start_str = '%s _%s:%s' % (event.start.strftime('%Y-%m-%d '), event.start.hour, event.start.strftime('%M:%S'))
+        else:
+            start_str = event.start.strftime('%Y-%m-%d %H:%M:%S')
+        
+        if event.end >= hack_day_date:
+            end_str = '%s _%s:%s' % (event.end.strftime('%Y-%m-%d '), event.end.hour, event.end.strftime('%M:%S'))
+        else:
+            end_str = event.end.strftime('%Y-%m-%d %H:%M:%S')
+            
+        result += '{"pk": %s, "model": "creators.event", "fields": {"detail_url": "%s", "end": "%s", "event_type": %s, "creator": %s, "name": "%s", "start": "%s", "room": %s, "icon": "%s", "description": "%s"}}' % (event.pk, 
+            event.detail_url, end_str, event.event_type.pk, event.creator.pk, event.name, start_str, event.room.pk, event.icon.pk, event.description)
+
+    result += ']'
+    return result
 
 # Photo
 
 def photo(request, pk = None):
-    return api_response(True, 'All Photos', serializers.serialize("json", Photo.objects.all().order_by('-created'), ensure_ascii = True))
+    return api_response(True, 'All Photos', serializers.serialize("json", Photo.objects.filter(state="live").order_by('-created')[:50], ensure_ascii = True))
 
 def photo_upload(request):
     if request.method == 'POST':
@@ -240,7 +273,8 @@ urlpatterns = patterns('',
     url(r'^status/add/$', add_status, name = "api_add_status"),
     
     # Events
-    url(r'^events/$', events),
+    url(r'^events/$', events_hack),
+    url(r'^events/normal/$', events),
     
     # Rooms
     url(r'^rooms/$', json_room, name = "api_room"),

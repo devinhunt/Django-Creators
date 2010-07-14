@@ -171,3 +171,6 @@ class Photo(models.Model):
     state = models.CharField(max_length = 4, choices = MOD_STATES, default = "dead")
     created = models.DateTimeField(auto_now_add = True)
     author = models.CharField(max_length = 140, blank = True)
+    
+    def __unicode__(self):
+        return "[%s] Photo uploaded %s by %s" % (self.state, self.created.isoformat(), self.author)
