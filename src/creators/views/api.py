@@ -174,12 +174,12 @@ def bad_date_json(events):
         
         '''2010-07-18 _0:01:00'''
         if event.start >= hack_day_date:
-            start_str = '%s_%s:%s' % (event.start.strftime('%Y-%m-%d '), event.start.hour, event.start.strftime('%M:%S'))
+            start_str = '%s _%s:%s' % (event.start.strftime('%Y-%m-%d'), event.start.hour, event.start.strftime('%M:%S'))
         else:
             start_str = event.start.strftime('%Y-%m-%d %H:%M:%S')
         
         if event.end >= hack_day_date:
-            end_str = '%s_%s:%s' % (event.end.strftime('%Y-%m-%d '), event.end.hour, event.end.strftime('%M:%S'))
+            end_str = '%s _%s:%s' % (event.end.strftime('%Y-%m-%d'), event.end.hour, event.end.strftime('%M:%S'))
         else:
             end_str = event.end.strftime('%Y-%m-%d %H:%M:%S')
             
