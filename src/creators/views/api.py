@@ -3,7 +3,7 @@ from django.core import serializers
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from datetime import datetime;
+from datetime import datetime, timedelta;
 
 hack_day_date = datetime(2010, 7, 18)
 
@@ -172,7 +172,6 @@ def bad_date_json(events):
         else:
             result += ', '
         
-        '''2010-07-18 _0:01:00'''
         if event.start >= hack_day_date:
             start_str = '%s _%s:%s' % (event.start.strftime('%Y-%m-%d'), event.start.hour, event.start.strftime('%M:%S'))
         else:
@@ -182,9 +181,17 @@ def bad_date_json(events):
             end_str = '%s _%s:%s' % (event.end.strftime('%Y-%m-%d'), event.end.hour, event.end.strftime('%M:%S'))
         else:
             end_str = event.end.strftime('%Y-%m-%d %H:%M:%S')
+        
+        #now = datetime(2010, 07, 14, 21, 38)
+        now = datetime.now();
+        
+        if now > event.start - timedelta(minutes = 30) and now < event.end:
+            event_type_pk = event.event_type.pk
+        else:
+            event_type_pk = 100
             
         result += '{"pk": %s, "model": "creators.event", "fields": {"detail_url": "%s", "end": "%s", "event_type": %s, "creator": %s, "name": "%s", "start": "%s", "room": %s, "icon": %s, "description": "%s"}}' % (event.pk, 
-            event.detail_url, end_str, hack_get_pk(event.event_type), hack_get_pk(event.creator), event.name, start_str, hack_get_pk(event.room), hack_get_pk(event.icon, True), event.description)
+            event.detail_url, end_str, event_type_pk, hack_get_pk(event.creator), event.name, start_str, hack_get_pk(event.room), hack_get_pk(event.icon, True), event.description)
 
     result += ']'
     return result
