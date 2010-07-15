@@ -166,6 +166,8 @@ def bad_date_json(events):
     result = '['
     first_loop = True
     
+    event_type_map = { 1 : 2, 2 : 1, 3: 3, 4 : 4}
+    
     for event in events:
         if first_loop:
             first_loop = False
@@ -186,7 +188,10 @@ def bad_date_json(events):
         now = datetime.now();
         
         if now > event.start - timedelta(minutes = 30) and now < event.end:
-            event_type_pk = event.event_type.pk
+            try:
+                event_type_pk = event_type_map[event.event_type.pk]
+            except:
+                event_type_pk = event.event_type.pk
         else:
             event_type_pk = 100
             
