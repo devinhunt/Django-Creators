@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-    <p>
-        News will go here
-    </p>
+
+    <h2>
+        {{ major_status.status }}
+    </h2>
+    
+    <ul>
+        {% for status in statuses %}
+        <li>
+            {{ status.status }}
+            <span>
+                - {{ status.author }}
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
