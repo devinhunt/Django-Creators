@@ -4,7 +4,9 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    (r'^$', 'index'),
+    #Default landing
+    (r'^$', include('creators.views.landing')),
+    (r'^news/', 'creators.views.landing.news'),
     
     # services
     (r'^api/', include('creators.views.api')),
