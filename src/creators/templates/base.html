@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta http-equiv="content-language" content="en" />
+        
+        <style type="text/css" media="screen">
+            /*_________________________________________________________ Global Reset */
+            html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+            a, abbr, acronym, address, big, cite, code, del, dfn, em,
+            img, ins, kbd, q, samp, small, strike, strong, sub, sup,
+            tt, var, dl, dt, dd, ol, ul, li,
+            fieldset, form, label, legend,
+            table, caption, tbody, tfoot, thead, tr, th, td {
+             margin: 0; padding: 0; border: 0; outline: 0; vertical-align: baseline; background: transparent; 
+             font-family: <?= $ffLucidia; ?>;
+            }
+            ul, li { list-style: none; }
+            table { border-spacing: 0; border-collapse: collapse; }
+            caption, th, td { text-align: left; font-weight: normal; }
+            blockquote, q { quotes: none; }
+            :focus { outline: 0; }
+
+            .clearit:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+            .clearit { zoom: 1; }
+            * html .clearit { height: 1%; }
+            
+            
+        </style>
+    </head>
+    
+    <body>
+        {% block content %}
+        {% endblock %}
+    </body>
+</html>
