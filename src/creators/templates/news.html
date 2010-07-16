@@ -5,7 +5,7 @@
         {% for status in statuses %}
         <li class="{% if status.state == 'major' %} major {% endif %} {% cycle '' 'odd' %} ">
             <p class="status">
-            {{ status.status }}
+                {{ status.status }}
             </p>
             <p class="meta">
                 - {{ status.author }} at {{ status.created|time:"H:i" }}

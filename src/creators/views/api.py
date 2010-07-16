@@ -126,8 +126,7 @@ def status(request, pk = None):
     if pk:
         return HttpResponse(serializers.serialize("json", Status.objects.filter(pk__gt = pk).order_by('-created'), ensure_ascii = True))
     else:
-
-        return HttpResponse(serializers.serialize("json", Status.objects.all().order_by('-created'), ensure_ascii = True))
+        return HttpResponse(serializers.serialize("json", Status.objects.exclude(state = 'dead').order_by('-created'), ensure_ascii = True))
 
 
 #Status POST
