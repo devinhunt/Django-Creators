@@ -1,18 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
-
-    <h2>
-        {{ major_status.status }}
-    </h2>
-    
+<div id="news">
     <ul>
         {% for status in statuses %}
-        <li>
+        <li class="{% if status.state == 'major' %} major {% endif %} {% cycle '' 'odd' %} ">
+            <p class="status">
             {{ status.status }}
-            <span>
-                - {{ status.author }}
-            </span>
+            </p>
+            <p class="meta">
+                - {{ status.author }} at {{ status.created|time:"H:i" }}
+            </p>
         </li>
         {% endfor %}
     </ul>
+</div>
 {% endblock %}
