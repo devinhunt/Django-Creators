@@ -186,7 +186,7 @@ def bad_date_json(events):
         #now = datetime(2010, 07, 14, 21, 38)
         now = datetime.now();
         
-        if now > event.start - timedelta(minutes = 30) and now < event.end:
+        if now > event.start - timedelta(minutes = 5) and now < event.end - timedelta(minutes = 5):
             try:
                 event_type_pk = event_type_map[event.event_type.pk]
             except:
