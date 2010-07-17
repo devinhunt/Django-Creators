@@ -173,4 +173,4 @@ class Photo(models.Model):
     author = models.CharField(max_length = 140, blank = True)
     
     def __unicode__(self):
-        return "[%s] Photo uploaded %s by %s" % (self.state, self.created.isoformat(), self.author)
+        return "[%s] %s uploaded %s by %s" % (self.state, self.image, self.created.strftime("%a %H:%M"), self.author)
