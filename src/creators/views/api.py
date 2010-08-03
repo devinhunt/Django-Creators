@@ -9,6 +9,10 @@ hack_day_date = datetime(2010, 7, 18)
 
 # User GET Methods
 def users(request):
+    
+    
+    
+    
     return api_response(True, "All users", serializers.serialize("json", PartyUser.objects.all(), ensure_ascii = True))
 
 def user_create(request):
@@ -46,7 +50,6 @@ def user_list_friend_status(request):
             statuses.append(friend.current_status)
     
     return api_response(True, 'List of friend statuses for %s' % user.name, serializers.serialize('json', statuses, ensure_ascii = True))
-    pass
     
 def user_events(request):
     user = get_user_from_key(request)
@@ -149,57 +152,11 @@ def add_status(request):
 
 
 # Event GET
-
 def events(request):
     result = '{ "events" : %s, "event_types": %s}' % (serializers.serialize("json", Event.objects.all(), ensure_ascii = True),
                                                       serializers.serialize("json", EventType.objects.all(), ensure_ascii = True))
     return api_response(True, 'All Events', result)
-    
-def events_hack(request):
-    events = Event.objects.all()
-    result = '{ "events" : %s, "event_types": %s}' % (bad_date_json(events),
-                                                      serializers.serialize("json", EventType.objects.all(), ensure_ascii = True))
-    return api_response(True, 'All Events', result)
-
-def bad_date_json(events):
-    result = '['
-    first_loop = True
-    
-    event_type_map = { 1 : 2, 2 : 1, 3: 3, 4 : 4}
-    
-    for event in events:
-        if first_loop:
-            first_loop = False
-        else:
-            result += ', '
         
-        if event.start >= hack_day_date:
-            start_str = '%s _%s:%s' % (event.start.strftime('%Y-%m-%d'), event.start.hour, event.start.strftime('%M:%S'))
-        else:
-            start_str = event.start.strftime('%Y-%m-%d %H:%M:%S')
-        
-        if event.end >= hack_day_date:
-            end_str = '%s _%s:%s' % (event.end.strftime('%Y-%m-%d'), event.end.hour, event.end.strftime('%M:%S'))
-        else:
-            end_str = event.end.strftime('%Y-%m-%d %H:%M:%S')
-        
-        #now = datetime(2010, 07, 14, 21, 38)
-        now = datetime.now();
-        
-        if now > event.start - timedelta(minutes = 5) and now < event.end - timedelta(minutes = 5):
-            try:
-                event_type_pk = event_type_map[event.event_type.pk]
-            except:
-                event_type_pk = event.event_type.pk
-        else:
-            event_type_pk = 100
-            
-        result += '{"pk": %s, "model": "creators.event", "fields": {"detail_url": "%s", "end": "%s", "event_type": %s, "creator": %s, "name": "%s", "start": "%s", "room": %s, "icon": %s, "description": "%s"}}' % (event.pk, 
-            event.detail_url, end_str, event_type_pk, hack_get_pk(event.creator), event.name, start_str, hack_get_pk(event.room), hack_get_pk(event.icon, True), event.description)
-
-    result += ']'
-    return result
-    
 def hack_get_pk(obj, quoted = False):
     try:
         if quoted:
@@ -294,7 +251,7 @@ urlpatterns = patterns('',
     url(r'^status/add/$', add_status, name = "api_add_status"),
     
     # Events
-    url(r'^events/$', events_hack),
+    url(r'^events/$', events),
     url(r'^events/normal/$', events),
     
     # Rooms
