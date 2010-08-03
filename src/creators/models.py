@@ -101,13 +101,8 @@ class Event(IconBase):
 
     def __unicode__(self):
         return self.name + " with " + self.creator.name
-    
-class StatusManager(models.Manager):
-    def get_by_natural_key(self, status, author):
-        return self.get(status = status, author = author)
 
 class Status(models.Model):
-    objects = StatusManager()
     
     MOD_STATES = (  ("dead", "Not Used"),
                     ("major", "Major Status"),
@@ -118,15 +113,6 @@ class Status(models.Model):
     created = models.DateTimeField(default = datetime.now())
     status = models.CharField(max_length = 140)
     author = models.CharField(max_length = 140)
-    
-    class Meta:
-        unique_together = (('status', 'author'),)
-            
-    def natural_keys(self):
-        return (self.status, self.author)
-
-    def __unicode__(self):
-        return '[' + self.state + '] ' + self.status
         
 class PartyUser(models.Model):
     name = models.CharField(max_length = 100)
