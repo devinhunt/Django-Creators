@@ -37,7 +37,7 @@ def get_pk(obj, quoted = False):
         else:
             return obj.pk
     except:
-        return 'null'
+        return None
         
 def get_pk_array(obj_array):
     json_array = []
