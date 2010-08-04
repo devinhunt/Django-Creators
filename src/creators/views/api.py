@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from datetime import datetime, timedelta
+import json
 
 hack_day_date = datetime(2010, 7, 18)
 
@@ -11,19 +12,25 @@ hack_day_date = datetime(2010, 7, 18)
 def users(request):
     #{"pk": 1, "model": "creators.partyuser", "fields": {"current_room": null, "name": "Bob", "checkin_time": null, "created": "2010-08-02 01:03:25", "current_status": 5, "events": [], "y": 0, "x": 0, "api_key": "ba82e5c657d3f92e0a90e589b9b53570", "friends": [], "current_floor": null}}
     
-    json_users = '['
-    first_user = True
+    json_users = []
     for user in PartyUser.objects.all():
-        if not first_user:
-            json_users += ', '
-        else:
-            first_user = False
-        
-        json_users += '{"pk": %s, "model": "creators.partyuser", "fields": {"current_room": %s, "name": "%s", "checkin_time": %s, "created": %s, "current_status": %s, "events": %s, "y": %s, "x": %s, "api_key": "%s", "friends": %s, "current_floor": %s, "current_status_msg": "%s"}}' \
-            % (user.pk, get_pk(user.current_room), user.name, get_json_date(user.checkin_time), get_json_date(user.created), get_pk(user.current_status), get_pk_array(user.events.all()), user.y, user.x, user.api_key, get_pk_array(user.friends.all()), get_pk(user.current_floor), get_user_msg(user))
-        
-    json_users += ']'
-    return api_response(True, "All users", json_users)
+        json_users.append({'pk': user.pk, 'model':"creators.partyuser", 'fields': { 
+                'current_room': get_pk(user.current_room),
+                'name': user.name,
+                'checking_time': get_json_date(user.checkin_time),
+                'created': get_json_date(user.created),
+                'current_status': get_pk(user.current_status),
+                'events': get_pk_array(user.events.all()),
+                'x': user.x,
+                'y': user.y,
+                'api_key': user.api_key,
+                'friends': get_pk_array(user.friends.all()),
+                'current_floor': get_pk(user.current_floor),
+                'current_status_msg': get_user_msg(user)
+            }})
+    
+    print len(json_users)
+    return api_response(True, "All users", json.dumps(json_users))
     
 def get_pk(obj, quoted = False):
     try:
@@ -35,26 +42,20 @@ def get_pk(obj, quoted = False):
         return 'null'
         
 def get_pk_array(obj_array):
-    json_array = '['
-    first_obj = True
+    json_array = []
     for obj in obj_array:
-        if not first_obj:
-            json_array += ', '
-        else:
-            first_obj = False
-        json_array += '%s' % (obj.pk)
-    json_array += ']'
+        json_array.append(obj.pk)
     return json_array
 
 def get_json_date(date):
     if date:
-        return '"%s"' % (date.strftime('%Y-%m-%d %H:%M:%S'))
+        return '%s' % (date.strftime('%Y-%m-%d %H:%M:%S'))
     else:
         return 'null'
         
 def get_user_msg(user):
     if(user.current_status):
-        return user.current_status.status.replace('"', '\\"').replace('\n', '\\n')
+        return user.current_status.status.replace('"', '\"').replace('\n', '\\n')
     else:
         return ''
 
