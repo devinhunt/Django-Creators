@@ -49,7 +49,7 @@ def get_json_date(date):
     if date:
         return '%s' % (date.strftime('%Y-%m-%d %H:%M:%S'))
     else:
-        return 'null'
+        return None
         
 def get_user_msg(user):
     if(user.current_status):
