@@ -28,8 +28,6 @@ def users(request):
                 'current_floor': get_pk(user.current_floor),
                 'current_status_msg': get_user_msg(user)
             }})
-    
-    print len(json_users)
     return api_response(True, "All users", json.dumps(json_users))
     
 def get_pk(obj, quoted = False):
