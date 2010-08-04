@@ -17,7 +17,7 @@ def users(request):
         json_users.append({'pk': user.pk, 'model':"creators.partyuser", 'fields': { 
                 'current_room': get_pk(user.current_room),
                 'name': user.name,
-                'checking_time': get_json_date(user.checkin_time),
+                'checkin_time': get_json_date(user.checkin_time),
                 'created': get_json_date(user.created),
                 'current_status': get_pk(user.current_status),
                 'events': get_pk_array(user.events.all()),
