@@ -15,12 +15,19 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'mysql'
-DATABASE_NAME = 'www_django'
-DATABASE_USER = 'www_django'
-DATABASE_PASSWORD = 'wWw_django'
+DATABASE_ENGINE = 'sqlite3'
+DATABASE_NAME = 'creators_production.db'
+DATABASE_USER = ''
+DATABASE_PASSWORD = ''
 DATABASE_HOST = ''
 DATABASE_PORT = ''
+
+#DATABASE_ENGINE = 'mysql'
+#DATABASE_NAME = 'www_django'
+#DATABASE_USER = 'www_django'
+#DATABASE_PASSWORD = 'wWw_django'
+#DATABASE_HOST = ''
+#DATABASE_PORT = ''
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
