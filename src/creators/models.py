@@ -72,6 +72,7 @@ class Creator(IconBase):
     name = models.CharField(max_length = 200)
     theme = models.CharField(max_length = 20, choices = CREATOR_THEMES)
     description = models.TextField(blank = True)
+    video_key = models.CharField(max_length = 40, blank = True, default = '')
     
     def __unicode__(self):
         return self.name
