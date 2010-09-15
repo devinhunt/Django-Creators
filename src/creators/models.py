@@ -27,6 +27,7 @@ class IconBase(models.Model):
 class Floor(IconBase):
     order = models.IntegerField(default = 0)
     name = models.CharField(max_length = 140, blank = True)
+    touchscreen_floor = models.BooleanField(default = False)
 
     class Meta:
         ordering = ['order']
