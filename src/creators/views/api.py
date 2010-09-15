@@ -195,8 +195,21 @@ def add_status(request):
 
 # Event GET
 def events(request):
-    result = '{ "events" : %s, "event_types": %s}' % (serializers.serialize("json", Event.objects.all(), ensure_ascii = True),
-                                                      serializers.serialize("json", EventType.objects.all(), ensure_ascii = True))
+    try:
+        start_meta = Metadata.objects.get(name = 'event_start').timestamp.__str__();
+    except:
+        start_meta = 'null'
+    
+    try:
+        end_meta = Metadata.objects.get(name = 'event_end').timestamp.__str__();
+    except:
+        end_meta = 'null'
+    
+    result = '{ "events" : %s, "event_types": %s, "event_start": %s, "event_end": %s}' % (serializers.serialize("json", Event.objects.all(), ensure_ascii = True),
+                                                      serializers.serialize("json", EventType.objects.all(), ensure_ascii = True),
+                                                      start_meta,
+                                                      end_meta)
+                                                      
     return api_response(True, 'All Events', result)
 
 # Photo
