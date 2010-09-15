@@ -196,12 +196,12 @@ def add_status(request):
 # Event GET
 def events(request):
     try:
-        start_meta = Metadata.objects.get(name = 'event_start').timestamp.__str__();
+        start_meta = '\"' + Metadata.objects.get(name = 'event_start').timestamp.__str__() + '\"';
     except:
         start_meta = 'null'
     
     try:
-        end_meta = Metadata.objects.get(name = 'event_end').timestamp.__str__();
+        end_meta = '\"' + Metadata.objects.get(name = 'event_end').timestamp.__str__() + '\"';
     except:
         end_meta = 'null'
     
