@@ -208,8 +208,26 @@ def events(request):
     result = '{ "events" : %s, "event_types": %s, "event_start": %s, "event_end": %s}' % (serializers.serialize("json", Event.objects.all(), ensure_ascii = True),
                                                       serializers.serialize("json", EventType.objects.all(), ensure_ascii = True),
                                                       start_meta,
+                                                      end_meta)   
+    return api_response(True, 'All Events', result)
+    
+def super_event_data(request):
+    try:
+        start_meta = '\"' + Metadata.objects.get(name = 'event_start').timestamp.__str__() + '\"';
+    except:
+        start_meta = 'null'
+    
+    try:
+        end_meta = '\"' + Metadata.objects.get(name = 'event_end').timestamp.__str__() + '\"';
+    except:
+        end_meta = 'null'
+    
+    result = '{ "events" : %s, "event_types": %s, "rooms": %s, "floors": %s, "event_start": %s, "event_end": %s}' % (serializers.serialize("json", Event.objects.all(), ensure_ascii = True),
+                                                      serializers.serialize("json", EventType.objects.all(), ensure_ascii = True),
+                                                      serializers.serialize("json", Room.objects.all(), ensure_ascii = True),
+                                                      serializers.serialize("json", Floor.objects.all(), ensure_ascii = True),
+                                                      start_meta,
                                                       end_meta)
-                                                      
     return api_response(True, 'All Events', result)
 
 # Photo
@@ -299,6 +317,7 @@ urlpatterns = patterns('',
     # Events
     url(r'^events/$', events),
     url(r'^events/normal/$', events),
+    url(r'^events/super/$', super_event_data),
     
     # Rooms
     url(r'^rooms/$', json_room, name = "api_room"),
